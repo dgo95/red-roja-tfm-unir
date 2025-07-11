@@ -33,19 +33,19 @@ services:
       start_period: 10s
 
   minio-init:
-   image: minio/mc:latest          # trae el binario mc
-   container_name: minio-init
-   networks: [logs-net]
-   depends_on:
-     minio:
-       condition: service_healthy  # espera a que MinIO responda 200/OK
-   environment:
-     MINIO_ROOT_USER:     ${MINIO_ROOT_USER}
-     MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-   volumes:
-     - ./create_buckets.sh:/create_buckets.sh:ro
-   entrypoint: /create_buckets.sh
-   restart: "no"
+    image: minio/mc:latest
+    container_name: minio-init
+    networks: [logs-net]
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER:     ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - ./create_buckets.sh:/create_buckets.sh:ro
+    entrypoint: /create_buckets.sh
+    restart: "no"
 
   fluentbit:
     image: cr.fluentbit.io/fluent/fluent-bit:3.0
@@ -63,6 +63,87 @@ services:
       AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
 
 #################################################################
+# 1.5 ▸ Vault                                                   #
+#################################################################
+  vault:
+    image: hashicorp/vault:1.16
+    container_name: vault
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: root
+      VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+      VAULT_ADDR: "http://127.0.0.1:8200"
+    ports: ["8200:8200"]
+    networks: [common-net]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "vault", "status", "-format=json"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 3s
+
+  vault-pki-setup:
+    image: hashicorp/vault:1.16
+    container_name: vault-pki-setup
+    depends_on:
+      vault:
+        condition: service_healthy
+    environment:
+      VAULT_ADDR:  http://vault:8200
+      VAULT_TOKEN: root
+    entrypoint: ["/bin/sh", "/init.sh"]
+    volumes:
+      - ./vault/init-pki.sh:/init.sh
+      - mysql-certs:/out
+    networks: [common-net]
+    restart: "no"
+
+#################################################################
+# 1.6 ▸ SPIFFE / SPIRE (mTLS interna)                           #
+#################################################################
+  spire-server:
+    image: ghcr.io/spiffe/spire-server:1.7.1
+    container_name: spire-server
+    command: ["-config", "/spire/conf/server/server.conf"]
+    volumes:
+      - ./spire/server:/spire/conf/server:ro
+      - spire-data:/spire/data
+    networks: [common-net]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "bin/spire-server", "healthcheck", "-socketPath", "/tmp/spire-registration.sock"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+  spire-agent:
+    image: ghcr.io/spiffe/spire-agent:1.7.1
+    container_name: spire-agent
+    depends_on:
+      spire-server:
+        condition: service_healthy
+    command: ["-config", "/spire/conf/agent/agent.conf"]
+    volumes:
+      - ./spire/agent:/spire/conf/agent:ro
+      - /var/run:/var/run            # para exponer Workload API vía UDS
+    networks: [common-net]
+    restart: unless-stopped
+
+#################################################################
+# 1.7 ▸ OPA (AutZ centralizada)                                 #
+#################################################################
+  opa:
+    image: openpolicyagent/opa:latest
+    container_name: opa
+    command: ["run", "--server", "--set=decision_logs.console=true", "/policies"]
+    volumes:
+      - ./opa/policies:/policies:ro
+    networks: [common-net]
+    ports: ["8181:8181"]
+    restart: unless-stopped
+
+#################################################################
 # 2 ▸ Bases de datos                                            #
 #################################################################
   mysql-db-nucleo:
@@ -72,10 +153,43 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_DB_NUCLEO_ROOT_PASSWORD}
       MYSQL_DATABASE:      ${MYSQL_DB_NUCLEO_NAME}
+      ENTORNO:             ${ENTORNO}
+      MYSQL_JPA_USER:      ${MYSQL_JPA_USER}
+      MYSQL_JPA_PASSWORD:  ${MYSQL_JPA_PASSWORD}
+      MYSQL_FLYWAY_USER:   ${MYSQL_FLYWAY_USER}
+      MYSQL_FLYWAY_PASSWORD: ${MYSQL_FLYWAY_PASSWORD}
+      # Keyring HashiCorp
+      VAULT_ADDR:  http://vault:8200
+      VAULT_TOKEN: root
+    command:
+      - --default_table_encryption=ON
+      - --table_encryption_privilege_check=ON
+      - --innodb_redo_log_encrypt=ON
+      - --innodb_undo_log_encrypt=ON
+      - --early-plugin-load=keyring_hashicorp.so
     volumes:
       - ${MYSQL_DB_NUCLEO_VOLUME}:/var/lib/mysql
+      - mysql-certs:/certs
+      - mysql-keyring:/var/lib/mysql-keyring
+      - ./keyring/component_keyring_hashicorp.cnf:/etc/my.cnf.d/component_keyring_hashicorp.cnf:ro
+      - ./init/20_tde.sh:/docker-entrypoint-initdb.d/20_tde.sh:ro
+      - ./init/02_create_users.sh:/docker-entrypoint-initdb.d/02_create_users.sh:ro
+      - ./mysql/ssl.cnf:/etc/mysql/conf.d/ssl.cnf:ro
+      - ./mysql/01-enforce-x509.sql:/docker-entrypoint-initdb.d/01-enforce-x509.sql:ro
+    entrypoint: >
+      bash -c '
+        set -euo pipefail
+        mkdir -p /var/lib/mysql-keyring && chown mysql:mysql /var/lib/mysql-keyring && chmod 700 /var/lib/mysql-keyring
+        [ -f /var/lib/mysql-keyring/keyring ] || { touch /var/lib/mysql-keyring/keyring && chown mysql:mysql /var/lib/mysql-keyring/keyring && chmod 600 /var/lib/mysql-keyring/keyring; }
+        exec /usr/local/bin/docker-entrypoint.sh mysqld "$@"
+      '
+    tmpfs:
+      - /run/mysqld-private:mode=0750
     ports: ["${MYSQL_DB_NUCLEO_PORT_EXTERNAL}:${MYSQL_DB_NUCLEO_PORT_INTERNAL}"]
-    networks: [logs-net, nucleo-db-net]
+    networks: [logs-net, nucleo-db-net, common-net]
+    depends_on:
+      vault-pki-setup:
+        condition: service_completed_successfully
     restart: always
 
   postgres-db-email:
@@ -119,6 +233,18 @@ services:
     networks: [logs-net, documentos-db-net]
     restart: always
 
+  redis:
+    image: redis:7
+    container_name: redis
+    networks: [common-net]
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: always
+
 #################################################################
 # 3 ▸ Micro-servicios (prefijo red-roja-)                       #
 #################################################################
@@ -127,6 +253,8 @@ services:
     image: dgo95/red-roja:nucleo
     container_name: ${RED_ROJA_NUCLEO_CONTAINER}
     depends_on: [mysql-db-nucleo]
+    volumes:
+      - mysql-certs:/app/certs/mysql:ro
     environment:
       MYSQL_HOST: ${MYSQL_DB_NUCLEO_CONTAINER}
       MYSQL_DATABASE: ${MYSQL_DB_NUCLEO_NAME}
@@ -135,8 +263,17 @@ services:
       REST_SERVICE_URI: ${REST_SERVICE_URI}
       DOCUMENTOS_SERVICE_URI: ${DOCUMENTOS_SERVICE_URI}
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_JPA_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_JPA_PASSWORD}
+      SPRING_FLYWAY_USER:         ${MYSQL_FLYWAY_USER}
+      SPRING_FLYWAY_PASSWORD:     ${MYSQL_FLYWAY_PASSWORD}
+      SPRING_DATASOURCE_TRUSTSTORE_PATH:  /app/certs/mysql/ca-int.pem
+      # mTLS interno
+      SPIFFE_ENDPOINT_SOCKET: /var/run/spire-agent/public/api.sock
     networks: [logs-net, nucleo-db-net, common-net]
     ports: ["${RED_ROJA_NUCLEO_PORT_EXTERNAL}:${RED_ROJA_NUCLEO_PORT_INTERNAL}"]
+    volumes_from:
+      - spire-agent
     restart: always
 
   red-roja-email:
@@ -155,15 +292,18 @@ services:
       REST_SERVICE_URI: ${REST_SERVICE_URI}
       DOCUMENTOS_SERVICE_URI: ${DOCUMENTOS_SERVICE_URI}
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPIFFE_ENDPOINT_SOCKET: /var/run/spire-agent/public/api.sock
     networks: [logs-net, email-db-net, common-net]
     ports: ["${RED_ROJA_EMAIL_PORT_EXTERNAL}:${RED_ROJA_EMAIL_PORT_INTERNAL}"]
+    volumes_from:
+      - spire-agent
     restart: always
 
   red-roja-documentos:
     <<: *fluentd-logging
     image: dgo95/red-roja:documentos
     container_name: ${RED_ROJA_DOCUMENTOS_CONTAINER}
-    depends_on: [postgres-db-documentos]
+    depends_on: [postgres-db-documentos, clamav]
     environment:
       POSTGRES_HOST:     ${POSTGRES_DB_DOCUMENTOS_CONTAINER}
       POSTGRES_PORT:     ${POSTGRES_DB_DOCUMENTOS_PORT_INTERNAL}
@@ -175,11 +315,16 @@ services:
       REST_SERVICE_URI: ${REST_SERVICE_URI}
       DOCUMENTOS_SERVICE_URI: ${DOCUMENTOS_SERVICE_URI}
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      CLAMAV_HOST: clamav
+      CLAMAV_PORT: 3310
+      SPIFFE_ENDPOINT_SOCKET: /var/run/spire-agent/public/api.sock
     volumes:
       - ${CJC_DOCUMENTOS_VOLUME_FOTOS}:/app/data/fotosPerfil
       - ${CJC_DOCUMENTOS_VOLUME_DOCS}:/app/data/documentos
     networks: [logs-net, documentos-db-net, common-net]
     ports: ["${RED_ROJA_DOCUMENTOS_PORT_EXTERNAL}:${RED_ROJA_DOCUMENTOS_PORT_INTERNAL}"]
+    volumes_from:
+      - spire-agent
     restart: always
 
   red-roja-gateway:
@@ -187,14 +332,21 @@ services:
     image: dgo95/red-roja:gateway
     container_name: ${RED_ROJA_GATEWAY_CONTAINER}
     environment:
-      JWT_SECRET: ${JWT_SECRET}
       CJC_FRONT:  ${CJC_FRONT}
       AUTH_SERVICE_URI: ${AUTH_SERVICE_URI}
       REST_SERVICE_URI: ${REST_SERVICE_URI}
       DOCUMENTOS_SERVICE_URI: ${DOCUMENTOS_SERVICE_URI}
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      KEYSTORE_PATH: /certs/gateway.p12
+      KEYSTORE_PASSWORD: changeit
+      OPA_BASEURL: http://opa:8181/v1/data
+      SPIFFE_ENDPOINT_SOCKET: /var/run/spire-agent/public/api.sock
     networks: [logs-net, common-net]
-    ports: ["${RED_ROJA_GATEWAY_PORT_EXTERNAL}:${RED_ROJA_GATEWAY_PORT_INTERNAL}"]
+    expose: ["8443"]
+    volumes:
+      - ./certs/gateway/gateway.p12:/certs/gateway.p12:ro
+    volumes_from:
+      - spire-agent
     restart: always
 
   red-roja-frontend:
@@ -203,18 +355,24 @@ services:
     container_name: ${RED_ROJA_FRONTEND_CONTAINER}
     depends_on: [red-roja-gateway]
     networks: [logs-net, common-net]
-    ports: ["${RED_ROJA_FRONTEND_PORT_EXTERNAL}:${RED_ROJA_FRONTEND_PORT_INTERNAL}"]
+    ports: ["${RED_ROJA_FRONTEND_PORT_EXTERNAL}:${RED_ROJA_FRONTEND_PORT_INTERNAL}", "443:443"]
+    volumes:
+      - ./certs/tls.crt:/etc/ssl/certs/fullchain.pem:ro
+      - ./certs/tls.key:/etc/ssl/private/privkey.pem:ro
     restart: always
 
 #################################################################
-# 4 ▸ Keycloak y demás infraestructura                          #
+# 4 ▸ Keycloak e infraestructura relacionada                    #
 #################################################################
   keycloak:
     <<: *fluentd-logging
     image: ${KEYCLOAK_IMAGE}
     container_name: ${KEYCLOAK_CONTAINER}
     depends_on: [keycloak-db]
-    command: ["start-dev","--http-relative-path=/"]
+    command:
+      - start-dev
+      - --http-enabled=true
+      - --hostname-strict=false
     environment:
       KC_DB:          postgres
       KC_DB_URL:      jdbc:postgresql://${KEYCLOAK_DB_CONTAINER}:5432/${KEYCLOAK_DB_NAME}
@@ -226,10 +384,13 @@ services:
       KC_EVENTS_ENABLED: "true"
       KC_EVENTS_LISTENERS: jboss-logging
       KC_EVENTS_STORE: database
+      KC_PROXY: edge
+      KC_FEATURES: token-exchange,admin-fine-grained-authz
     volumes:
       - ./keycloak-data:/opt/keycloak/data/import
       - ./themes:/opt/keycloak/themes:ro
       - ./providers:/opt/keycloak/providers
+      - ./certs:/opt/keycloak/certs:ro
     networks: [logs-net, keycloak-network, common-net]
     ports: ["${KEYCLOAK_PORT_EXTERNAL}:${KEYCLOAK_PORT_INTERNAL}"]
     restart: always
@@ -273,6 +434,21 @@ services:
     restart: always
 
 #################################################################
+# 4.5 ▸ ClamAV (escaneo antimalware para documentos)            #
+#################################################################
+  clamav:
+    image: clamav/clamav:latest
+    container_name: clamav
+    networks: [common-net]
+    ports: ["3310:3310"]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "clamdscan", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+#################################################################
 # 5 ▸ Redes y volúmenes                                         #
 #################################################################
 networks:
@@ -285,8 +461,12 @@ networks:
   common-net:        { driver: bridge }
 
 volumes:
+  mysql-keyring:
   minio-data:
   buffers:
   keycloak-db-data:
     external: true
     name: desktop_keycloak-db-data
+  mysql-certs:
+    name: red-roja_mysql-certs
+  spire-data:
