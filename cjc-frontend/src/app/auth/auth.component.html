@@ -1,0 +1,222 @@
+<div class="container-fluid ps-md-0">
+    <div class="row g-0">
+        <!-- Imagen de fondo en el lado izquierdo -->
+        <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+
+        <!-- Contenedor de formularios en el lado derecho -->
+        <div class="col-md-8 col-lg-6">
+            <div class="auth-container d-flex align-items-center py-5">
+                <div class="container h-100">
+                    <div class="row h-100">
+                        <div class="col-md-9 col-lg-8 mx-auto h-100 d-flex align-items-center">
+                            <!-- Contenedor de ambos formularios con clase dinámica para el modo 'reset' -->
+                            <div class="forms-wrapper" [class.reset-mode]="mode === 'reset'">
+                                
+                                <!-- Formulario de Inicio de Sesión -->
+                                <div class="form-content login-form">
+                                    <h3 data-cy="titulo" class="login-heading mb-4">
+                                        {{ 'ui.login.titulo' | translate }}
+                                    </h3>
+                                    <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" data-cy="carnet" class="form-control" id="inputCarnet"
+                                                placeholder="1234" formControlName="carnet"
+                                                [ngClass]="{ 'is-invalid': loginSubmitted && loginControls['carnet'].errors }">
+                                            <div *ngIf="loginSubmitted && loginControls['carnet'].errors"
+                                                class="invalid-feedback">
+                                                <div *ngIf="loginControls['carnet'].errors['required']"
+                                                    data-cy="errorCarnetRequerido">
+                                                    {{ 'ui.errores.carnetRequerido' | translate }}
+                                                </div>
+                                                <div *ngIf="loginControls['carnet'].errors['pattern']"
+                                                    data-cy="errorCarnetNoValido">
+                                                    {{ 'ui.errores.carnetInvalido' | translate }}
+                                                </div>
+                                            </div>
+                                            <label for="inputCarnet">{{ 'ui.inputs.carnet' | translate }}</label>
+                                        </div>
+
+                                        <div class="form-floating mb-3">
+                                            <input type="password" data-cy="contrasena" class="form-control"
+                                                id="inputPassword" placeholder="Contraseña" formControlName="password"
+                                                [ngClass]="{ 'is-invalid': loginSubmitted && loginControls['password'].errors }">
+                                            <div *ngIf="loginSubmitted && loginControls['password'].errors"
+                                                class="invalid-feedback">
+                                                <div *ngIf="loginControls['password'].errors['required']"
+                                                    data-cy="errorPassRequerida">
+                                                    {{ 'ui.errores.contrasenaRequerida' | translate }}
+                                                </div>
+                                            </div>
+                                            <div *ngIf="loginErrorServidor" class="trampa" data-cy="errorServer">
+                                                {{ 'ui.errores.servidor' | translate }}
+                                            </div>
+                                            <div *ngIf="loginFailed" class="trampa" data-cy="errorLogin">
+                                                {{ 'ui.errores.mensajeLogin' | translate }}
+                                            </div>
+                                            <label for="inputPassword">{{ 'ui.inputs.contrasena' | translate }}</label>
+                                        </div>
+
+                                        <div class="d-grid">
+                                            <button data-cy="boton"
+                                                class="btn btn-lg btn-danger btn-login text-uppercase fw-bold mb-2"
+                                                type="submit">
+                                                {{ 'ui.botones.iniciarSesion' | translate }}
+                                            </button>
+                                            <div class="text-center">
+                                                <a class="small" data-cy="restablecerPass" href="javascript:void(0)"
+                                                    (click)="switchToReset()">
+                                                    {{ 'ui.login.restablecerPass' | translate }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <!-- Formulario de Restablecer Contraseña -->
+                                <div class="form-content reset-form">
+                                    <h3 class="login-heading mb-4">
+                                        {{ 'ui.restablecerPass.titulo' | translate }}
+                                    </h3>
+
+                                    <!-- Primera Parte: Enviar Email -->
+                                    <div *ngIf="primeraParte">
+                                        <div *ngIf="!resetMandado">
+                                            <form [formGroup]="carnetForm" (ngSubmit)="enviarEmail()">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="inputCarnetReset"
+                                                        placeholder="1234" formControlName="carnet"
+                                                        [ngClass]="{ 'is-invalid': resetSubmitted && carnetControls['carnet'].errors }">
+                                                    <div *ngIf="resetSubmitted && carnetControls['carnet'].errors"
+                                                        class="invalid-feedback">
+                                                        <div *ngIf="carnetControls['carnet'].errors['required']">
+                                                            {{ 'ui.errores.carnetRequerido' | translate }}
+                                                        </div>
+                                                        <div *ngIf="carnetControls['carnet'].errors['pattern']">
+                                                            {{ 'ui.errores.carnetInvalido' | translate }}
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="resetErrorServidor" class="trampa">
+                                                        {{ 'ui.errores.servidor' | translate }}
+                                                    </div>
+                                                    <label for="inputCarnetReset">{{ 'ui.inputs.carnet' | translate }}</label>
+                                                </div>
+                                                <div class="d-grid">
+                                                    <button [disabled]="isLoading"
+                                                        class="btn btn-lg btn-danger btn-login text-uppercase fw-bold mb-2"
+                                                        type="submit">
+                                                        <ng-container *ngIf="!isLoading">
+                                                            {{ 'ui.botones.enviarEmailPass' | translate }}
+                                                        </ng-container>
+                                                        <ng-container *ngIf="isLoading">
+                                                            <div class="spinner-border text-light" role="status">
+                                                                <span class="sr-only"></span>
+                                                            </div>
+                                                        </ng-container>
+                                                    </button>
+                                                    <button
+                                                        class="btn btn-lg btn-secondary btn-login text-uppercase fw-bold mb-2"
+                                                        type="button" (click)="switchToLogin()">
+                                                        {{ 'ui.botones.cancelar' | translate }}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div *ngIf="resetMandado" class="panel panel-info">
+                                            <div class="panel-heading">
+                                                <ng-icon name="bootstrapInfoCircle"></ng-icon>
+                                                {{ 'ui.panel.info' | translate }}
+                                            </div>
+                                            <div class="panel-body">
+                                                {{ 'ui.restablecerPass.infoPanel' | translate }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Segunda Parte: Restablecer Contraseña -->
+                                    <div *ngIf="!primeraParte">
+                                        <div *ngIf="!resetMandado">
+                                            <form [formGroup]="nuevaPassForm" (ngSubmit)="restablecerPass()">
+                                                <div class="form-floating mb-3">
+                                                    <input type="password" class="form-control" id="inputPasswordReset"
+                                                        placeholder="1234" formControlName="password"
+                                                        [ngClass]="{ 'is-invalid': resetSubmitted && nuevaPassControls['password'].errors }">
+                                                    <div *ngIf="resetSubmitted && nuevaPassControls['password'].errors"
+                                                        class="invalid-feedback">
+                                                        <div *ngIf="nuevaPassControls['password'].errors['required']">
+                                                            {{ 'ui.errores.contrasenaRequerida' | translate }}
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="resetErrorServidor" class="trampa">
+                                                        {{ 'ui.errores.servidor' | translate }}
+                                                    </div>
+                                                    <label for="inputPasswordReset">{{ 'ui.inputs.contrasena' |
+                                                        translate }}</label>
+                                                </div>
+
+                                                <div class="form-floating mb-3">
+                                                    <input type="password" class="form-control"
+                                                        id="inputConfirmPasswordReset" placeholder="Contraseña"
+                                                        formControlName="confirmPassword"
+                                                        [ngClass]="{ 'is-invalid': resetSubmitted && nuevaPassControls['confirmPassword'].errors }">
+                                                    <div *ngIf="resetSubmitted && nuevaPassControls['confirmPassword'].errors"
+                                                        class="invalid-feedback">
+                                                        <div
+                                                            *ngIf="nuevaPassControls['confirmPassword'].errors['required']">
+                                                            {{ 'ui.errores.contrasenaRequerida' | translate }}
+                                                        </div>
+                                                        <div
+                                                            *ngIf="nuevaPassControls['confirmPassword'].errors['matchPassword']">
+                                                            {{ 'ui.errores.matchPassword' | translate }}
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="resetErrorServidor" class="trampa">
+                                                        {{ 'ui.errores.servidor' | translate }}
+                                                    </div>
+                                                    <label for="inputConfirmPasswordReset">{{ 'ui.inputs.contrasena' |
+                                                        translate }}</label>
+                                                </div>
+
+                                                <div class="d-grid">
+                                                    <button [disabled]="isLoading"
+                                                        class="btn btn-lg btn-danger btn-login text-uppercase fw-bold mb-2"
+                                                        type="submit">
+                                                        <ng-container *ngIf="!isLoading">
+                                                            {{ 'ui.botones.restablecerPass' | translate }}
+                                                        </ng-container>
+                                                        <ng-container *ngIf="isLoading">
+                                                            <div class="spinner-border text-light" role="status">
+                                                                <span class="sr-only"></span>
+                                                            </div>
+                                                        </ng-container>
+                                                    </button>
+                                                    <button
+                                                        class="btn btn-lg btn-secondary btn-login text-uppercase fw-bold mb-2"
+                                                        type="button" (click)="switchToLogin()">
+                                                        {{ 'ui.botones.cancelar' | translate }}
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div *ngIf="resetMandado" class="panel panel-success">
+                                            <div class="panel-heading">
+                                                <ng-icon name="bootstrapCheckCircle"></ng-icon>
+                                                {{ 'ui.panel.succesPanel' | translate }}
+                                            </div>
+                                            <div class="panel-body">
+                                                {{ 'ui.restablecerPass.succesPanel' | translate }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Fin del contenedor de formularios -->
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

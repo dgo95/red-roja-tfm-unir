@@ -1,0 +1,66 @@
+trigger:
+- main
+
+###############################################################################
+# PRIMER STAGE: Extraer la versión
+###############################################################################
+stages:
+- stage: ExtractVersion
+  displayName: "Extraer versión del proyecto"
+  jobs:
+  - job: GetVersion
+    displayName: "Obtener versión desde package.json"
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - script: |
+        echo "Verificando existencia de package.json..."
+        if [ ! -f package.json ]; then
+          echo "Error: package.json no encontrado."
+          exit 1
+        fi
+        echo "Extrayendo versión del proyecto..."
+        VERSION=$(cat package.json | jq -r '.version')
+        if [ -z "$VERSION" ]; then
+          echo "Error: No se pudo extraer la versión."
+          exit 1
+        fi
+        echo "Versión encontrada: $VERSION"
+
+        # 1) Establecer la variable 'version' como *output*
+        echo "##vso[task.setvariable variable=version;isOutput=true]$VERSION"
+      name: setVersion  # 2) Nombrar el paso para referenciar la variable
+      displayName: "Extraer y guardar versión"
+
+###############################################################################
+# SEGUNDO STAGE: Construir y publicar la imagen
+###############################################################################
+- stage: BuildAndPush
+  displayName: "Construir y publicar imagen Docker"
+  dependsOn: ExtractVersion
+  # 3) Consumir la variable de salida del stage anterior
+  variables:
+    # La sintaxis es stageDependencies.<stageName>.<jobName>.outputs['<stepName>.<variableName>']
+    version: $[ stageDependencies.ExtractVersion.GetVersion.outputs['setVersion.version'] ]
+  condition: succeeded()
+  jobs:
+  - job: BuildAndPushDocker
+    displayName: "Construir y publicar imagen Docker"
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: Docker@2
+      displayName: "Login en Docker Hub"
+      inputs:
+        command: login
+        containerRegistry: "dockerHubConnection"
+    - task: Docker@2
+      displayName: "Build and push Docker image"
+      inputs:
+        # Usa buildAndPush en un mismo paso (más sencillo)
+        command: buildAndPush
+        containerRegistry: "dockerHubConnection"
+        repository: "dgo95/red-roja"
+        dockerfile: "$(Build.SourcesDirectory)/Dockerfile"
+        tags: |
+         frontend

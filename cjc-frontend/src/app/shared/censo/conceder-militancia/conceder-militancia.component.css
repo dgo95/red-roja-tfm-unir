@@ -1,0 +1,8 @@
+.switch-size {
+    transform: scale(1.5); /* Ajusta el tamaño del switch */
+}
+
+.align-items-center {
+    display: flex;
+    align-items: center; /* Centra el switch verticalmente con respecto al label */
+}

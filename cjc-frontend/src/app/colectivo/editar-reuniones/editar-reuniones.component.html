@@ -1,0 +1,254 @@
+<!-- editar-responsabilidades-modal.component.html -->
+<div class="modal show d-block posicion" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar reunión</h5>
+        <button type="button" class="btn-close" (click)="cancelar()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form">
+          <!-- Fecha y Hora -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="meetingDateTime" class="form-label">Fecha y Hora</label>
+              <input type="datetime-local" class="form-control" id="meetingDateTime"
+                formControlName="fecha">
+              @if (form.get('fecha')?.touched && form.get('fecha')?.errors) {
+                <div
+                  class="alert alert-danger">
+                  @if (form.get('fecha')?.errors?.['required']) {
+                    <div>La fecha y hora son obligatorias.
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+            <!-- Duración -->
+            <div class="col-md-6 mb-3">
+              <label for="meetingDuration" class="form-label">Duración (en horas)</label>
+              <input type="number" class="form-control" id="meetingDuration" formControlName="duracion"
+                placeholder="Ingrese la duración">
+              @if (form.get('duracion')?.touched && form.get('duracion')?.errors) {
+                <div
+                  class="alert alert-danger">
+                  @if (form.get('duracion')?.errors?.['required']) {
+                    <div>La duración es obligatoria.
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Ubicación -->
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="meetingLocation" class="form-label">Ubicación</label>
+              <input type="text" class="form-control" id="meetingLocation" formControlName="direccion"
+                placeholder="Ingrese la ubicación o enlace">
+              @if (form.get('direccion')?.touched && form.get('direccion')?.errors) {
+                <div
+                  class="alert alert-danger">
+                  @if (form.get('direccion')?.errors?.['required']) {
+                    <div>La ubicación es obligatoria.
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Agregar Invitado -->
+            <div class="col-md-6 mb-3 d-flex align-items-center justify-content-md-center">
+              <button type="button" class="btn btn-secondary" (click)="agregarInvitado()">Agregar
+              Invitado</button>
+            </div>
+          </div>
+
+          <!-- Invitados -->
+          <div formArrayName="invitados">
+            @for (invitado of invitados.controls; track invitado; let i = $index) {
+              <div [formGroupName]="i"
+                class="mb-3">
+                <div class="input-group">
+                  <div class="input-group-text">
+                    <input class="form-check-input mt-0" type="checkbox" formControlName="esMilitante"
+                      (change)="toggleCarnetInput(i)">
+                    <label class="ms-2">Militante</label>
+                  </div>
+                  @if (!invitado.get('esMilitante')?.value) {
+                    <input type="text" class="form-control"
+                      placeholder="Nombre" formControlName="nombre">
+                  }
+                  @if (!invitado.get('esMilitante')?.value) {
+                    <input type="email" class="form-control"
+                      placeholder="Email" formControlName="email">
+                  }
+                  @if (invitado.get('esMilitante')?.value) {
+                    <input type="text" class="form-control"
+                      placeholder="Número de Carnet" formControlName="numeroCarnet">
+                  }
+                  <button class="btn btn-outline-secondary" type="button"
+                  (click)="eliminarInvitado(i)">Eliminar</button>
+                </div>
+              </div>
+            }
+            @if (form.hasError('nombreEmailRequeridos')) {
+              <div class="alert alert-danger"> Nombre y Email
+              son requeridos para no militantes.</div>
+            }
+            @if (form.hasError('numeroCarnetRequerido')) {
+              <div class="alert alert-danger"> Número de Carnet
+              es requerido para militantes.</div>
+            }
+          </div>
+          <!-- Orden del Día -->
+          <div formArrayName="puntos" class="mb-3">
+            <!-- Contenedor Flex para el Título y el Botón -->
+            <div class="d-flex justify-content-between align-items-center">
+              <label for="meetingAgenda" class="form-label mb-0">Orden del Día</label>
+              <!-- Botón-icono verde con +, alineado a la derecha -->
+              <button type="button" class="btn btn-transparent" (click)="crearPunto()"
+                data-bs-toggle="tooltip" data-bs-placement="top" title="Crear un punto.">
+                <i class="bi bi-plus-circle-fill icon-plus-lg"></i>
+              </button>
+              @if (modalCrearPuntoVisible) {
+                <app-crear-punto (confirmar)="recibeModal($event)"
+                  (cerrar)="modalCrearPuntoVisible=false" [punto]="puntoNuevo"
+                > </app-crear-punto>
+              }
+            </div>
+
+            <div class="accordion" id="puntosAccordion">
+              @for (punto of puntos.controls; track punto; let k = $index) {
+                <div class="accordion-item"
+                  [formGroupName]="k">
+                  <h2 class="accordion-header" [id]="'heading'+k">
+                    <button class="accordion-button" [class.collapsed]="editingPuntoIndex !== k"
+                      type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse'+k"
+                      [attr.aria-expanded]="editingPuntoIndex !== k ? 'false' : 'true'"
+                      [attr.aria-controls]="'collapse'+k">
+                      <!-- Antes del botón, agregar lógica para alternar entre vista de edición y normal -->
+                      @if (editingPuntoIndex !== k) {
+                        <span class="flex-grow-1">
+                          {{punto.get('orden')?.value + ". " + punto.get('titulo')?.value}}
+                        </span>
+                      } @else {
+                        <input formControlName="titulo" class="form-control me-auto" type="text"
+                          [value]="punto.get('titulo')?.value" />
+                      }
+                      <!-- Contenedor para el botón y el ícono, alineados a la derecha -->
+                      @if (editingPuntoIndex !== k) {
+                        <div class="d-flex align-items-center">
+                          <!-- Botón para añadir un nuevo subpunto con icono, sin margen extra -->
+                          <button type="button" class="btn p-0 ms-auto" (click)="crearSubpunto(punto)"
+                            data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="Crear un subpunto.">
+                            <i class="bi bi-plus-square"></i>
+                          </button>
+                          <!-- Botón para editar el punto con icono, sin margen extra -->
+                          <button type="button" class="btn p-0 ms-2" (click)="editarPunto(k)"
+                            data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="Editar el punto.">
+                            <i class="bi bi-pencil-square"></i>
+                          </button>
+                          <!-- Botón para eliminar el punto con icono, sin margen extra -->
+                          <button type="button" class="btn p-0 ms-2" (click)="eliminarPunto(punto)"
+                            data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="Eliminar el punto.">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                          <!-- Ícono de desplegar/colapsar -->
+                          <span class="accordion-button-icon"></span>
+                        </div>
+                      }
+                      <!-- Botones para confirmar o cancelar la edición -->
+                      @if (editingPuntoIndex === k) {
+                        <div class="d-flex align-items-center">
+                          <button type="button" class="btn p-0 ms-auto"
+                            (click)="confirmarEdicion(punto, k)">
+                            <i class="bi bi-check-lg"></i>
+                          </button>
+                          <button type="button" class="btn p-0 ms-2" (click)="cancelarEdicion()">
+                            <i class="bi bi-x-lg"></i>
+                          </button>
+                        </div>
+                      }
+                    </button>
+                  </h2>
+                  <div [id]="'collapse'+k" class="accordion-collapse collapse" [attr.aria-labelledby]="'heading'+k" data-bs-parent="#puntosAccordion">
+                    <div class="accordion-body">
+                      <!-- Verificación de 'descripcion' no null/vacía -->
+                      @if (punto.get('descripcion')?.value && punto.get('descripcion')?.value !== '') {
+                        <p class="texto-justificado-izquierda">
+                          {{punto.get('descripcion')?.value}}
+                        </p>
+                      }
+                      @if (punto.get('subpuntos')) {
+                        <div formArrayName="subpuntos">
+                          @for (subpunto of getFormArray(punto.get('subpuntos')).controls; track subpunto; let j = $index) {
+                            <div [formGroupName]="j" class="d-flex justify-content-between align-items-center mb-2">
+                              <!-- Contenedor Flex para Título/Subtítulo y Botones de Edición -->
+                              @if (editingSubpuntoIndex !== j) {
+                                <div>
+                                  <span>{{getLowercaseLetterFromNumber(subpunto.get('orden')?.value)+". "}}{{subpunto.get('titulo')?.value}}</span>
+                                </div>
+                              } @else {
+                                <input formControlName="titulo" class="form-control" type="text" [value]="subpunto.get('titulo')?.value" />
+                              }
+                              <!-- Botones de Acción, visibles dependiendo del estado de edición -->
+                              @if (editingSubpuntoIndex !== j) {
+                                <div class="d-flex">
+                                  <button type="button" class="btn btn-sm" (click)="editarSubpunto(k, j)">
+                                    <i class="bi bi-pencil-square"></i>
+                                  </button>
+                                  <button type="button" class="btn btn-sm" (click)="eliminarSubpunto(punto, subpunto)">
+                                    <i class="bi bi-trash"></i>
+                                  </button>
+                                </div>
+                              }
+                              @if (editingSubpuntoIndex === j) {
+                                <div class="d-flex">
+                                  <!-- Asegúrate de que estos botones estén dentro de un div con `d-flex` -->
+                                  <button type="button" class="btn btn-sm" (click)="confirmarEdicionSubpunto(subpunto, k, j)">
+                                    <i class="bi bi-check-lg"></i>
+                                  </button>
+                                  <button type="button" class="btn btn-sm" (click)="cancelarEdicionSubpunto()">
+                                    <i class="bi bi-x-lg"></i>
+                                  </button>
+                                </div>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+              @if (form.hasError('minArrayLength')) {
+                <div class="alert alert-danger"> El orden del día
+                  debe
+                  tener al menos un punto.
+                son requeridos para no militantes.</div>
+              }
+            </div>
+          </div>
+          <!-- Prelimilitantes -->
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="addPreliminaries"
+              formControlName="premilitantes">
+            <label class="form-check-label" for="addPreliminaries">Añadir Prelimilitantes</label>
+          </div>
+        </form>
+
+      </div>
+      <!-- Aquí termina la grilla de dos columnas -->
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+        <button type="submit" [disabled]="!form.valid" class="btn btn-danger"
+        (click)="aceptar()">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

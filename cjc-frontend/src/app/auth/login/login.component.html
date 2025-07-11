@@ -1,0 +1,61 @@
+<div class="container-fluid ps-md-0">
+  <div class="row g-0">
+    <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+    <div class="col-md-8 col-lg-6">
+      <div class="login d-flex align-items-center py-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-9 col-lg-8 mx-auto">
+              <h3 data-cy="titulo" class="login-heading mb-4">{{'ui.login.titulo' | translate }}</h3>
+
+              <!-- Sign In Form -->
+              <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                <div class="form-floating mb-3">
+                  <input type="text" data-cy="carnet" class="form-control" id="floatingInput" placeholder="1234"
+                    formControlName="carnet" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.carnet.errors }" id="inputCarnet4">
+                    @if (submitted && f.carnet.errors) {
+                      <div class="invalid-feedback">
+                        @if (f.carnet.errors.required) {
+                          <div data-cy="errorCarnetRequerido">{{'ui.errores.carnetRequerido' | translate }}</div>
+                        }
+                        @if (f.carnet.errors.carnet) {
+                          <div data-cy="errorCarnetNoValido">{{'ui.errores.carnetInvalido' | translate }}</div>
+                        }
+                      </div>
+                    }
+                    <label for="floatingInput">{{'ui.inputs.carnet' | translate }}</label>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <input data-cy="contrasena" type="password" class="form-control" id="floatingPassword" placeholder="Contraseña"
+                      formControlName="password" [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
+                      id="inputPassword4">
+                      @if (submitted && f.password.errors) {
+                        <div class="invalid-feedback">
+                          @if (f.password.errors.required) {
+                            <div data-cy="errorPassRequerida">{{'ui.errores.contrasenaRequerida' | translate }}</div>
+                          }
+                        </div>
+                      }
+                      @if (errorServidor) {
+                        <div class="trampa" data-cy="errorServer">{{'ui.errores.servidor' | translate }}</div>
+                      }
+                      @if (loginFailed) {
+                        <div class="trampa" data-cy="errorLogin">{{'ui.errores.mensajeLogin' | translate }}</div>
+                      }
+                      <label for="floatingPassword">{{'ui.inputs.contrasena' | translate }}</label>
+                    </div>
+                    <div class="d-grid">
+                      <button data-cy="boton" class="btn btn-lg btn btn-danger btn-login text-uppercase fw-bold mb-2" type="submit">{{'ui.botones.iniciarSesion' | translate }}</button>
+                      <div class="text-center">
+                        <a class="small" data-cy="restablecerPass" href="/restablecer-contrasena">{{'ui.login.restablecerPass' | translate }}</a>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,117 @@
+<div class="container py-5">
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <mat-form-field appearance="fill">
+        <mat-label>Seleccionar tipo de censo</mat-label>
+        <mat-select [(value)]="tipoCenso" (selectionChange)="cambiarTipoCenso($event.value)">
+          @for (tipo of tiposCenso; track tipo) {
+            <mat-option [value]="tipo">{{ tipo }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-md-6">
+      <button class="btn btn-danger me-2" (click)="openCrearEditarMilitanteModal(null)">
+        <i class="bi bi-person-add"></i> Añadir Militante
+      </button>
+      <button class="btn btn-danger" (click)="openCrearEditarContactoModal(null)">
+        <i class="bi bi-envelope-plus"></i> Crear Contacto
+      </button>
+    </div>
+  </div>
+
+
+
+  <!-- Un parrado de ejemplo -->
+  <p class="personalizada">
+    El censo es una lista de personas que pertenecen a una organización. En este caso, el censo de militantes
+    es una lista de personas que pertenecen a un partido político. En el censo de militantes se pueden
+    realizar diferentes acciones como añadir, editar o eliminar militantes, crear fichas de movilidad, conceder
+    militancia, entre otras.
+  </p>
+
+
+
+
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+          @for (column of displayedColumns; track column) {
+            <ng-container [matColumnDef]="column">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ nombreColumna(column) }} </th>
+              <td mat-cell *matCellDef="let element"> {{ element[column] }} </td>
+            </ng-container>
+          }
+
+          @if (tipoCenso==='GENERAL') {
+            <ng-container matColumnDef="opciones">
+              <th mat-header-cell *matHeaderCellDef class="sticky-column"> Opciones </th>
+              <td mat-cell *matCellDef="let element" class="sticky-column">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  @if (element.premilitante) {
+                    <button mat-menu-item (click)="concederMilitancia(element)">
+                      <i class="bi bi-award gold-icon"></i> Conceder Militancia
+                    </button>
+                  }
+                  <button mat-menu-item (click)="openCrearEditarMilitanteModal(element)">Editar Militante</button>
+                  @if (!element.fichaMovilidad) {
+                    <button mat-menu-item (click)="movilidadMilitante(element)">Crear Ficha Movilidad</button>
+                  }
+                  @if (element.fichaMovilidad) {
+                    <button mat-menu-item (click)="movilidadMilitante(element)">Editar Ficha Movilidad</button>
+                  }
+                  @if (!element.premilitante) {
+                    <button mat-menu-item (click)="ajustesAvanzadosMilitante(element)">Ajustes Avanzados</button>
+                  }
+                  <button mat-menu-item (click)="confirmarEliminacionMilitante(element)">Eliminar Militante</button>
+                </mat-menu>
+              </td>
+            </ng-container>
+          }
+
+          <tr mat-header-row *matHeaderRowDef="tipoCenso === 'GENERAL' ? displayedColumns.concat(['opciones']):displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: tipoCenso === 'GENERAL' ? displayedColumns.concat(['opciones']):displayedColumns;"></tr>
+        </table>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-success me-2 excel-button" (click)="descargarExcel()" [disabled]="generandoExcel"
+          aria-label="Exportar a Excel">
+          @if (generandoExcel) {
+            <span class="spinner-border spinner-border-sm" role="status"
+            aria-hidden="true"></span>
+          }
+          @if (!generandoExcel) {
+            <i class="bi bi-filetype-xlsx"></i>
+          }
+        </button>
+      </div>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" (page)="onPaginateChange($event)"></mat-paginator>
+    </div>
+  </div>
+</div>
+@if (openFichaMovilidad) {
+  <app-ficha-movilidad [militanteId]="militanteIdMovilidad" (cerrar)="openFichaMovilidad=false"></app-ficha-movilidad>
+}
+@if (openAjustesAvanzados) {
+  <app-ajustes-avanzados [militanteId]="militanteIdAjustes" (cerrar)="openAjustesAvanzados=false"></app-ajustes-avanzados>
+}
+@if (openConcederMilitancia) {
+  <app-conceder-militancia [militanteId]="militanteIdConcederMilitancia" (cerrar)="openConcederMilitancia=false" (confirmar)="this.promociona()"></app-conceder-militancia>
+}
+@if (openCrearEditarMilitante) {
+  <app-crear-editar-militante [militanteId]="militanteIdEditar"
+    [comiteId]="comite.id" (cerrar)="openCrearEditarMilitante=false;militanteIdEditar=null"
+    (confirmar)="crearEditarMilitante($event)">
+  </app-crear-editar-militante>
+}
+@if (openCrearEditarContacto) {
+  <app-crear-editar-contacto [contactoId]="contactoIdEditar"
+    [comiteId]="comite.id" (cerrar)="openCrearEditarContacto=false;contactoIdEditar=null"
+    (confirmar)="crearEditarContacto($event)">
+  </app-crear-editar-contacto>
+}

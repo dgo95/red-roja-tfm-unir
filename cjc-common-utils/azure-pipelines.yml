@@ -1,0 +1,59 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  # ID del servidor para Maven
+  MAVEN_SERVER_ID: 'pcte-cjc-red-roja'
+
+steps:
+  # Paso opcional: Limpiar el directorio de trabajo antes de empezar
+  - script: rm -f $(System.DefaultWorkingDirectory)/settings.xml
+    displayName: "Limpiar settings.xml previo"
+
+  # Generar el archivo settings.xml dinámicamente
+  - script: |
+      echo "Generando settings.xml"
+      echo "<settings xmlns='http://maven.apache.org/SETTINGS/1.0.0'" > $(System.DefaultWorkingDirectory)/settings.xml
+      echo "          xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'" >> $(System.DefaultWorkingDirectory)/settings.xml
+      echo "          xsi:schemaLocation='http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd'>" >> $(System.DefaultWorkingDirectory)/settings.xml
+      echo "  <servers>" >> $(System.DefaultWorkingDirectory)/settings.xml
+      echo "    <server>" >> $(System.DefaultWorkingDirectory)/settings.xml
+      echo "      <id>$(MAVEN_SERVER_ID)</id>" >> $(System.DefaultWorkingDirectory)/settings.xml
+      echo "      <username>$(MAVEN_USERNAME)</username>" >> $(System.DefaultWorkingDirectory)/settings.xml
+      echo "      <password>$(MAVEN_PASSWORD)</password>" >> $(System.DefaultWorkingDirectory)/settings.xml
+      echo "    </server>" >> $(System.DefaultWorkingDirectory)/settings.xml
+      echo "  </servers>" >> $(System.DefaultWorkingDirectory)/settings.xml
+      echo "</settings>" >> $(System.DefaultWorkingDirectory)/settings.xml
+    displayName: "Generar settings.xml"
+    env:
+      MAVEN_USERNAME: $(MAVEN_USERNAME)
+      MAVEN_PASSWORD: $(MAVEN_PASSWORD)
+
+  # Paso de build usando Maven
+  - task: Maven@4
+    displayName: "Build del proyecto con Maven"
+    inputs:
+      mavenPomFile: 'pom.xml'
+      goals: 'clean install'
+      options: '--settings $(System.DefaultWorkingDirectory)/settings.xml -Dmaven.test.skip=true'
+      publishJUnitResults: true
+      javaHomeOption: 'JDKVersion'
+      jdkVersion: '1.17'
+      mavenVersionOption: 'Default'
+      mavenAuthenticateFeed: false
+
+  # Paso de deploy usando Maven
+  - task: Maven@4
+    displayName: "Deploy del proyecto con Maven"
+    inputs:
+      mavenPomFile: 'pom.xml'
+      goals: 'deploy'
+      options: '--settings $(System.DefaultWorkingDirectory)/settings.xml -Dmaven.test.skip=true'
+      publishJUnitResults: true
+      javaHomeOption: 'JDKVersion'
+      jdkVersion: '1.17'
+      mavenVersionOption: 'Default'
+      mavenAuthenticateFeed: false

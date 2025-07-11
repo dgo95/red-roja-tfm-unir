@@ -1,0 +1,72 @@
+<p-dialog header="Subir documento" [(visible)]="visible"  [modal]="true" [style]="{ width: '40rem' }"
+    appendTo="body" (onHide)="onCancelar()">
+    <p-fileUpload #fileUploader customUpload name="myfile" [auto]="false" [multiple]="false"
+      accept=".pdf,.doc,.docx,.odt,.txt,.zip,image/*" (onSelect)="onFileSelect($event)" (uploadHandler)="onAceptar()"
+      maxFileSize="2000000" chooseLabel="Seleccionar archivo" uploadLabel="Subir" cancelLabel="Cancelar">
+      <ng-template #empty>
+        <div
+          class="d-flex flex-column align-items-center justify-content-center p-4 border border-dashed border-primary rounded"
+          style="min-height:150px;cursor:pointer;">
+          <i class="pi pi-cloud-upload text-primary" style="font-size:3rem;"></i>
+          <span class="mt-2 text-primary">Arrastra un archivo aquí o haz clic para seleccionar</span>
+        </div>
+      </ng-template>
+      <ng-template #content let-files>
+        <form [formGroup]="form">
+          <div *ngIf="files?.length > 0" class="p-fluid mt-4">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Título <span class="text-danger">*</span></label>
+                <input pInputText formControlName="titulo" class="form-control" />
+                <div *ngIf="form.get('titulo')?.invalid && (form.get('titulo')?.touched || form.get('titulo')?.dirty)" class="invalid-feedback d-block">
+                  El título es obligatorio.
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Fecha <span class="text-danger">*</span></label>
+                <p-datePicker formControlName="fecha" dateFormat="dd/mm/yy" showIcon="true" class="w-100" />
+                <div *ngIf="form.get('fecha')?.invalid && (form.get('fecha')?.touched || form.get('fecha')?.dirty)" class="invalid-feedback d-block">
+                  La fecha es obligatoria.
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Confidencialidad <span class="text-danger">*</span></label>
+                <p-select [options]="confidencialidades" formControlName="confidencialidad"
+                  optionLabel="label" optionValue="value" class="w-100" appendTo="body"
+                  placeholder="Selecciona la confidencialidad" />
+                <div *ngIf="form.get('confidencialidad')?.invalid && (form.get('confidencialidad')?.touched || form.get('confidencialidad')?.dirty)" class="invalid-feedback d-block">
+                  La confidencialidad es obligatoria.
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Tipo <span class="text-danger">*</span></label>
+                <p-select [options]="tipos" formControlName="tipo" optionLabel="label" optionValue="value"
+                  class="w-100" appendTo="body" placeholder="Selecciona el tipo de documento" />
+                <div *ngIf="form.get('tipo')?.invalid && (form.get('tipo')?.touched || form.get('tipo')?.dirty)" class="invalid-feedback d-block">
+                  El tipo es obligatorio.
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Categoría <span class="text-danger">*</span></label>
+                <p-select [options]="categorias" formControlName="categoria" optionLabel="label"
+                  optionValue="value" class="w-100" appendTo="body" placeholder="Selecciona la categoría" />
+                <div *ngIf="form.get('categoria')?.invalid && (form.get('categoria')?.touched || form.get('categoria')?.dirty)" class="invalid-feedback d-block">
+                  La categoría es obligatoria.
+                </div>
+              </div>
+            </div>
+            <ng-container *ngIf="form.get('confidencialidad')?.value === Confidencialidad.CONFIDENCIAL">
+              <div class="alert alert-info mt-4 text-center" role="alert">
+                <i class="pi pi-info-circle me-2"></i>
+                Pese a ser confidencial, todos los miembros de direcciones superiores tendrán acceso a este documento.
+              </div>
+            </ng-container>
+          </div>
+        </form>
+      </ng-template>
+    </p-fileUpload>
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button pButton type="button" label="Cancelar" class="p-button-text" (click)="onCancelar()"></button>
+      <button pButton type="button" label="Subir" [disabled]="form.invalid" (click)="onAceptar()"></button>
+    </div>
+  </p-dialog>

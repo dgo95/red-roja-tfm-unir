@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Convocatoria de Reunión</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #333;">
+    <div style="max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <h1 style="color: rgb(0, 0, 0); text-align: center;">Convocatoria de Reunión</h1>
+        
+        <p>¡Muy buenas [[${nombre}]]!,</p>
+    
+    	<p>Se te ha convocado a la próxima reunión del <strong style="color: rgb(255, 0, 0);">[[${colectivo}]]</strong>.</p>
+        
+        <p><strong style="color: rgb(0, 0, 0);">Detalles de la Reunión:</strong></p>
+        <ul style="list-style: none; padding: 0;">
+            <li><strong>Fecha:</strong> [[${fecha}]]</li>
+            <li><strong>Hora:</strong> [[${hora}]]</li>
+            <li><strong>Duración Aproximada:</strong> [[${duracion}]]</li>
+            <li><strong>Ubicación:</strong> [[${ubicacion}]]</li>
+			<li><strong>Orden del Día:<br/></strong> <span style="white-space: pre-wrap;" th:utext="${ordenDelDia}">[Orden del Día]</span></li>
+
+        </ul>
+        
+        <p>¡Nos vemos!</p>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <p>Atentamente,</p>
+            <div dir="ltr" class="gmail_signature" data-smartmail="gmail_signature">
+         <b>
+         </b>
+         <div dir="ltr">
+            <font color="#ff0000"
+               ><b><br /></b
+               ></font>
+            <div>
+               <b>
+               <font color="#ff0000"
+                  >&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;<img
+                  src="cid:attachment.png"
+                  width="90"
+                  height="96" /><br
+                  /></font>
+               </b>
+            </div>
+            <div>
+               <b>
+               <font color="#ff0000"
+                  >&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;CJC -
+               [[${colectivo}]]
+               </font>
+               </b>
+            </div>
+         </div>
+      </div>
+            <p style="color: red; text-transform: uppercase; font-weight: bold;">¡No hay teoría revolucionaria sin práctica revolucionaria!</p>
+        </div>
+    </div>
+</body>
+</html>

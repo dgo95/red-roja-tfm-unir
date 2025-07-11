@@ -1,0 +1,94 @@
+<p-dialog [(visible)]="visible"
+          [modal]="true"
+          [style]="{width:'30rem'}"
+          (onHide)="cancelar.emit()">
+
+  <ng-template pTemplate="header">
+    <span class="fw-semibold text-danger fs-4">
+      <i class="pi pi-pencil me-2"></i> Editar documento
+    </span>
+  </ng-template>
+
+  <p-card class="shadow-none border-0" styleClass="background:transparent">
+  <form [formGroup]="form" class="p-fluid formgrid grid gx-3 gy-2 p-2 md:p-3">
+      <!-- Título: siempre a ancho completo -->
+      <div class="field col-12">
+        <label for="titulo" class="mb-2 font-semibold">Título</label>
+        <span class="p-input-icon-left w-100">
+          <i class="pi pi-file-edit" style="font-size:1.1em"></i>
+          <input
+            id="titulo"
+            pInputText
+            formControlName="titulo"
+            class="w-100 p-inputtext-lg"
+            maxlength="255"
+            autocomplete="off"
+            [class.p-invalid]="form.get('titulo')?.invalid && form.get('titulo')?.touched"
+            placeholder="Introduce el título del documento"
+          />
+        </span>
+        <small *ngIf="form.get('titulo')?.invalid && form.get('titulo')?.touched" class="p-error">
+          El título es obligatorio y máximo 255 caracteres
+        </small>
+      </div>
+      <!-- Confidencialidad -->
+      <div class="field col-12 md:col-6">
+        <label for="confidencialidad" class="mb-2 font-semibold">Confidencialidad</label>
+        <p-select
+          inputId="confidencialidad"
+          [options]="confidencialidades"
+          formControlName="confidencialidad"
+          showClear
+          optionLabel="label"
+          optionValue="value"
+          class="w-100"
+          [class.p-invalid]="form.get('confidencialidad')?.invalid && form.get('confidencialidad')?.touched"
+          placeholder="Selecciona..."
+        ></p-select>
+        <small *ngIf="form.get('confidencialidad')?.invalid && form.get('confidencialidad')?.touched" class="p-error">
+          Campo obligatorio
+        </small>
+      </div>
+      <!-- Tipo -->
+      <div class="field col-12 md:col-6">
+        <label for="tipo" class="mb-2 font-semibold">Tipo</label>
+        <p-select
+          inputId="tipo"
+          [options]="tipos"
+          formControlName="tipo"
+          showClear
+          optionLabel="label"
+          optionValue="value"
+          class="w-100"
+          [class.p-invalid]="form.get('tipo')?.invalid && form.get('tipo')?.touched"
+          placeholder="Selecciona..."
+        ></p-select>
+        <small *ngIf="form.get('tipo')?.invalid && form.get('tipo')?.touched" class="p-error">
+          Campo obligatorio
+        </small>
+      </div>
+      <!-- Categoría -->
+      <div class="field col-12 md:col-6">
+        <label for="categoria" class="mb-2 font-semibold">Categoría</label>
+        <p-select
+          inputId="categoria"
+          [options]="categorias"
+          formControlName="categoria"
+          showClear
+          optionLabel="label"
+          optionValue="value"
+          class="w-100"
+          placeholder="Selecciona..."
+          appendTo="body"
+        ></p-select>
+      </div>
+    </form>
+</p-card>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Cancelar" class="p-button-secondary"
+            (click)="cancelar.emit()"></button>
+    <button pButton label="Guardar" class="p-button-danger"
+            (click)="guardar()"></button>
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,12 @@
+<form [formGroup]="idiomaForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+        <label for="languageSelect" class="form-label">{{ 'ui.ajustes.idioma' | translate }}</label>
+        <select class="form-select" id="languageSelect" formControlName="selectedLanguage">
+            <option value="es">{{ 'ui.inputs.es' | translate }}</option>
+            <option value="ca">{{ 'ui.inputs.ca' | translate }}</option>
+            <option value="gl">{{ 'ui.inputs.ga' | translate }}</option>
+            <option value="eu">{{ 'ui.inputs.eu' | translate }}</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-danger">{{ 'ui.ajustes.guardarIdioma' | translate }}</button>
+</form>

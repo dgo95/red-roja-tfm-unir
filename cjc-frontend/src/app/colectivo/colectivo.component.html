@@ -1,0 +1,123 @@
+<div class="container py-5">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <mat-tab-group (selectedIndexChange)="alCambiarTab($event)">
+            <mat-tab label="Resumen">
+              <div class="container">
+                <div class="row py-1">
+                  <!-- Card en blanco en la mitad derecha -->
+                  <div class="col-md-6">
+                    <div class="card shadow-sm">
+                      <div class="card-header bg-danger text-white">
+                        <h5 class="m-0">
+                          Responsabilidades del Colectivo
+                          <!-- Botón con ícono de edición -->
+                          <button class="btn btn-editar" type="button" aria-label="Editar responsabilidades"
+                            title="Editar responsabilidades" (click)="abrirModalEditarResponsabilidades()">
+                            <i class="bi bi-pencil-square"></i>
+                          </button>
+                          <!-- Componente modal que se muestra basado en la propiedad mostrarModalEditarResponsabilidades -->
+                          @if (mostrarModalEditarResponsabilidades) {
+                          <app-editar-responsabilidades-modal
+                            [responsabilidades]="transformarResp(this.responsabilidades)" [militantes]="militantes"
+                            (cerrar)="mostrarModalEditarResponsabilidades=false"
+                            (confirmar)="confirmarResponsabilidades($event)">
+                          </app-editar-responsabilidades-modal>
+                          }
+                        </h5>
+                      </div>
+                      <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                          @for (responsabilidad of muestraResponsabilidades(); track responsabilidad.id) {
+                            <li class="list-group-item">
+                              <span class="responsabilidad-nombre"><strong>{{ responsabilidad.nombre }}</strong>:</span>
+                              <span class="responsabilidad-persona">{{ responsabilidad.persona }}</span>
+                            </li>
+                          }
+                        </ul>                        
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Card de reuniones -->
+                  <div class="col-md-6">
+                    <div class="card">
+                      <div class="card-header bg-danger text-white">
+                        <h5 class="m-0">
+                          Próximas reuniones
+                        </h5>
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <!-- Columna para fechas -->
+                          <div class="col-8">
+                            <div class="reuniones-info">
+                              <div class="reunion-item">
+                                <span class="reunion-label">Última reunión:</span>
+                                <span class="reunion-date">{{fechaUltimaReunion}}</span>
+                              </div>
+                              <div class="reunion-item">
+                                <span class="reunion-label">Próxima reunión:</span>
+                                <span class="reunion-date">{{fechaProximaReunion}}
+                                  @if (!reunionConvocada) {
+                                  <span class="badge bg-secondary">Teórica</span>
+                                  }
+                                  @if (reunionConvocada) {
+                                  <span class="badge bg-success">Convocada</span>
+                                  }
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- Columna para el botón -->
+                          <div class="col-4">
+                            <div class="d-flex align-items-end flex-column">
+                              @if (!reunionConvocada) {
+                              <button type="button" class="btn btn-danger mb-3" (click)="abrirModalReunion()">Convocar
+                                reunión</button>
+                              }
+                              @if (reunionConvocada) {
+                              <button type="button" class="btn btn-secondary mb-3" (click)="abrirModalReunion()">Editar
+                                reunión</button>
+                              }
+                              @if (mostrarEditarReuniones) {
+                              <app-editar-reuniones [reunion]="reunion" [edita]="reunionConvocada"
+                                (cerrar)="mostrarEditarReuniones=false"
+                                (confirmar)="confirmarReunion($event)"></app-editar-reuniones>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-tab>
+            <mat-tab label="Censo">
+              @if (indiceSeleccionado === indiceTabCenso) {
+              <app-censo [esComite]="false" [comite]="colectivo"></app-censo>
+              }
+            </mat-tab>
+            <mat-tab label="Finanzas">
+              <!-- Contenido de la pestaña Cuotas -->
+              <p>Aquí se podrán consultar las cuotas pendientes.</p>
+            </mat-tab>
+            <mat-tab label="Reuniones">
+              <!-- Contenido de la pestaña Reuniones -->
+              <p>Aquí se podrán gestionar las reuniones.</p>
+            </mat-tab>
+            <mat-tab label="Inventario">
+              <!-- Contenido de la pestaña Cuotas -->
+              <p>Aquí se podrán consultar el inventario.</p>
+            </mat-tab>
+            <mat-tab label="Documentos">
+              <!-- Contenido de la pestaña Documentos -->
+              <app-documentos-tab [colectivoId]="comiteId" [esComite]="esComite" [descendientes]="colectivo && colectivo.dependientes ? colectivo.dependientes : []"></app-documentos-tab>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+      </div>
+    </div>
+  </div>

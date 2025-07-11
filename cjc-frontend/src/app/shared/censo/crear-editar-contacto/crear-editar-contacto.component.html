@@ -1,0 +1,156 @@
+<div class="modal show d-block posicion" tabindex="1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Formulario Contactos</h5>
+        <button type="button" class="btn-close" (click)="cancelar()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <mat-horizontal-stepper [linear]="false" #stepper class="custom-stepper">
+          <!-- Paso 1: Datos Básicos -->
+          <mat-step [stepControl]="formDatosBasicos">
+            <form [formGroup]="formDatosBasicos">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="nombre" class="form-label">Nombre</label>
+                  <input type="text" class="form-control" id="nombre" formControlName="nombre"
+                    placeholder="Nombre del contacto">
+                </div>
+                <div class="col-md-6">
+                  <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                  <input type="date" class="form-control" id="fechaNacimiento"
+                    formControlName="fechaNacimiento">
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6 form-check form-switch switch-lg">
+                  <input class="form-check-input" type="checkbox" id="estudiante"
+                    formControlName="estudiante">
+                  <label class="form-check-label" for="estudiante">Estudiante</label>
+                </div>
+                <div class="col-md-6 form-check form-switch switch-lg">
+                  <input class="form-check-input" type="checkbox" id="trabajador"
+                    formControlName="trabajador">
+                  <label class="form-check-label" for="trabajador">Trabajador</label>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="telefono" class="form-label">Teléfono</label>
+                  <input type="text" class="form-control" id="telefono" formControlName="telefono"
+                    placeholder="Número de teléfono">
+                </div>
+                <div class="col-md-6">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="email" formControlName="email"
+                    placeholder="Correo electrónico">
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label for="municipio" class="form-label">Municipio</label>
+                  <select class="form-select" id="municipio" formControlName="municipio">
+                    <option value="" disabled>Seleccione un municipio</option>
+                    @for (municipio of municipios; track municipio) {
+                      <option [value]="municipio.id">
+                      {{municipio.nombre}}</option>
+                    }
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label for="provincia" class="form-label">Provincia</label>
+                  <select class="form-select" id="provincia" formControlName="provincia"
+                    (change)="cambiaProvincia($any($event.target).value)">
+                    <option value="" disabled>Seleccione una provincia</option>
+                    @for (provincia of provincias; track provincia) {
+                      <option [value]="provincia.id">{{
+                      provincia.nombre }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label for="comunidadAutonoma" class="form-label">Región</label>
+                  <select class="form-select" id="comunidadAutonoma"
+                    formControlName="comunidadAutonoma"
+                    (change)="cambiaComunidad($any($event.target).value)">
+                    <option value="" disabled>Seleccione una comunidad autónoma</option>
+                    @for (comunidad of comunidadesAutonomas; track comunidad) {
+                      <option [value]="comunidad.id">{{
+                      comunidad.nombre }}</option>
+                    }
+                  </select>
+                </div>
+              </div>
+            </form>
+          </mat-step>
+
+          <!-- Paso 2: Datos de Estado -->
+          <mat-step [stepControl]="formDatosEstado">
+            <form [formGroup]="formDatosEstado" class="container">
+              <div class="row mb-3">
+                <!-- Situación Origen: Ocupa el 100% del ancho -->
+                <div class="col-12">
+                  <label for="situacionOrigen" class="form-label">Situación Origen</label>
+                  <textarea class="form-control" id="situacionOrigen" rows="3"
+                  formControlName="situacionOrigen"></textarea>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <!-- Estado Actual: Ocupa el 100% del ancho -->
+                <div class="col-12">
+                  <label for="estadoActual" class="form-label">Estado Actual</label>
+                  <textarea class="form-control" id="estadoActual" rows="3"
+                  formControlName="estadoActual"></textarea>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <!-- Encargado de Seguimiento: Ocupa el 50% del ancho -->
+                <div class="col-12 col-md-6">
+                  <label for="encargadoSeguimiento" class="form-label">Encargado de
+                  Seguimiento</label>
+                  <select class="form-select" id="encargadoSeguimiento"
+                    formControlName="encargadoSeguimiento">
+                    <option value="" disabled>Seleccione un encargado</option>
+                    @for (encargado of responsables; track encargado) {
+                      <option [value]="encargado.id">
+                      {{encargado.nombre}}</option>
+                    }
+                  </select>
+                </div>
+
+                <!-- Próxima Tarea: Ocupa el 50% del ancho -->
+                <div class="col-12 col-md-6">
+                  <label for="proximaTarea" class="form-label">Próxima Tarea</label>
+                  <textarea class="form-control" id="proximaTarea" rows="3"
+                  formControlName="proximaTarea"></textarea>
+                </div>
+              </div>
+            </form>
+          </mat-step>
+
+        </mat-horizontal-stepper>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+        <button class="btn btn-primary" (click)="debug()">Debug</button>
+        @if (isLastStep()) {
+          <button type="submit" [disabled]="!formDatosBasicos.valid || !formDatosEstado.valid"
+          class="btn btn-danger" (click)="aceptar()">Aceptar</button>
+        }
+        @if (!isFirstStep()) {
+          <button class="btn btn-secondary" (click)="onFooterButtonClick('previous')"
+          >Anterior</button>
+        }
+        @if (!isLastStep()) {
+          <button class="btn btn-danger" (click)="onFooterButtonClick('next')"
+          >Siguiente</button>
+        }
+      </div>
+
+    </div>
+  </div>
+</div>

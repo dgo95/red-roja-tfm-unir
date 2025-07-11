@@ -1,0 +1,65 @@
+.reuniones-info {
+    margin-top: 20px;
+}
+
+.reunion-item {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.reunion-label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.reunion-date {
+    margin-left: 10px;
+}
+
+.card-header {
+    background-color: #ff0000;
+    color: white;
+}
+
+.list-group-item {
+    border: none;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.responsabilidad-nombre {
+    min-width: 150px;
+}
+
+.responsabilidad-persona {
+    margin-left: 10px; /* Esto asegura un espacio entre el nombre de la responsabilidad y la persona */
+}
+
+.list-group-item:nth-child(odd) {
+    background-color: #f8f9fa;
+}
+
+.list-group-item strong {
+    color: #000000;
+}
+
+.btn-editar {
+    color: white; /* Color blanco para que combine con el fondo */
+    background: transparent; /* Fondo transparente */
+    border: none; /* Sin bordes */
+    padding: 0; /* Sin padding para que se alinee bien con el texto */
+    margin-left: 10px; /* Un pequeño margen a la izquierda */
+}
+
+.btn-editar:focus {
+    outline: none; /* Para evitar el contorno al hacer clic */
+}
+
+.btn-editar i,
+.btn-editar span {
+    font-size: 1em; /* Tamaño del ícono */
+}

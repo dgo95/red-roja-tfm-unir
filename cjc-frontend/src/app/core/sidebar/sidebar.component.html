@@ -1,0 +1,135 @@
+<nav id="sidebar"
+     class="sidebar"
+     [ngClass]="{ 'sidebar-bg': hasBackgroundImage() }">
+
+  <!-- ─────────── Contenido desplazable ─────────── -->
+  <div class="sidebar-content">
+    <div class="custom-scrollbar">
+
+      <!-- ─────────── Cabecera ─────────── -->
+      <div class="sidebar-header">
+        <img src="/assets/images/logoCJC.png"
+             alt="Logo CJC"
+             class="cjc-logo">
+      </div>
+
+      <!-- ─────────── Perfil de usuario ─────────── -->
+      <div class="sidebar-profile">
+
+        <!-- Foto -->
+        <div class="user-pic">
+          <ng-container *ngIf="loadingFotoPerfil; else fotoReal">
+            <p-skeleton shape="square" size="60px"></p-skeleton>
+          </ng-container>
+          <ng-template #fotoReal>
+            <img class="img-fluid img-rounded"
+                 [src]="fotoPerfil"
+                 alt="Foto de usuario">
+          </ng-template>
+        </div>
+
+        <!-- Datos -->
+        <div class="user-info">
+          <ng-container *ngIf="loadingSidebar; else infoReal">
+            <p-skeleton width="120px" height="1.2rem" [style.margin-bottom]="'.5rem'"></p-skeleton>
+            <p-skeleton width="90px"  height="1rem"></p-skeleton>
+          </ng-container>
+          <ng-template #infoReal>
+            <span class="user-name">
+              {{ nombreUsuario }} <strong>{{ apellidosUsuario }}</strong>
+            </span>
+            <span class="user-role">
+              {{ 'ui.sidebar.numCarnet' | translate }}{{ numeroCarnet }}
+            </span>
+          </ng-template>
+        </div>
+      </div><!-- /sidebar-profile -->
+
+      <!-- ─────────── Menú ─────────── -->
+      <div class="sidebar-menu">
+
+        <!-- General -->
+        <span class="seccion">{{ 'ui.sidebar.general' | translate }}</span>
+
+        <ng-container *ngIf="loadingSidebar; else menuReal">
+          <div *ngFor="let _ of [1,2,3,4]" class="sidebar-menu-item">
+  <p-skeleton width="80%" height="1.5rem"></p-skeleton>
+</div>
+        </ng-container>
+
+        <!-- Menú real -->
+        <ng-template #menuReal>
+
+          <!-- Opciones generales -->
+          <ul>
+            @for (menu of menuGeneral; track menu) {
+              <li [ngClass]="{ active: menu.active }">
+                <a [routerLink]="menu.path">
+                  <i [class]="menu.icon"></i>
+                  <span>{{ menu.title | translate }}</span>
+
+                  @if (menu.badge) {
+                    <span class="badge badge-pill"
+                          [ngClass]="menu.badge.class">
+                      {{ menu.badge.text }}
+                    </span>
+                  }
+                </a>
+              </li>
+            }
+          </ul>
+
+          <!-- Extras -->
+          <span class="seccion">{{ 'ui.sidebar.extras' | translate }}</span>
+          <ul>
+            @for (menu of menuExtra; track menu) {
+              <li [ngClass]="{ active: menu.active }">
+                <a [routerLink]="menu.path">
+                  <i [class]="menu.icon"></i>
+                  <span>{{ menu.title | translate }}</span>
+
+                  @if (menu.badge) {
+                    <span class="badge badge-pill"
+                          [ngClass]="menu.badge.class">
+                      {{ menu.badge.text }}
+                    </span>
+                  }
+                </a>
+              </li>
+            }
+          </ul>
+
+        </ng-template>
+      </div><!-- /sidebar-menu -->
+
+    </div><!-- /custom-scrollbar -->
+  </div><!-- /sidebar-content -->
+
+  <!-- ─────────── Pie de barra ─────────── -->
+  <div class="sidebar-footer">
+
+    <!-- Notificaciones -->
+    <div class="dropdown" dropdown>
+      <a dropdownToggle>
+        <i class="bi bi-bell-fill"></i>
+        <span class="badge rounded-pill bg-warning text-dark notification">?</span>
+      </a>
+    </div>
+
+    <!-- Ajustes -->
+    <div class="dropdown" dropdown>
+      <a routerLink="/ajustes">
+        <i class="bi bi-gear-fill"></i>
+        <span class="badge-sonar"></span>
+      </a>
+    </div>
+
+    <!-- Logout -->
+    <div>
+      <a (click)="logOut()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </a>
+    </div>
+
+  </div><!-- /sidebar-footer -->
+</nav>

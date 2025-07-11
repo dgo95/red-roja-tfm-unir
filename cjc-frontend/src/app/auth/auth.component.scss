@@ -1,0 +1,170 @@
+// Variables de colores para mantener consistencia y facilitar cambios futuros
+$color-error: #dc3545;
+$panel-info-bg: #d9edf7;
+$panel-info-color: #31708f;
+$panel-success-bg: #dff0d8;
+$panel-success-color: #3c763d;
+
+// Contenedor principal de autenticación
+.auth-container {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding-top: 0;
+    padding-bottom: 0;
+
+    .container {
+        height: 100%;
+        padding: 20px; // Añadido para spacing en móviles
+    }
+
+    .row {
+        height: 100%;
+    }
+
+    .col-md-12.col-lg-10 {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+}
+
+// Imagen de fondo
+.bg-image {
+    background: url("../../assets/images/poradaLogin.jpg") center center / cover no-repeat;
+}
+
+// Estilos para los encabezados de inicio de sesión
+.login-heading {
+    font-weight: 300;
+}
+
+// Botón de inicio de sesión
+.btn-login {
+    font-size: 0.9rem;
+    letter-spacing: 0.05rem;
+    padding: 0.75rem 1rem;
+}
+
+// Mensajes de error
+.trampa {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 80%;
+    color: $color-error;
+}
+
+// Paneles informativos
+.panel {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 15px;
+
+    &-heading {
+        display: flex;
+        align-items: center;
+        font-size: 1.25rem;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+
+    &-info {
+        background-color: $panel-info-bg;
+        color: $panel-info-color;
+    }
+
+    &-success {
+        background-color: $panel-success-bg;
+        color: $panel-success-color;
+    }
+
+    &-body {
+        font-size: 1rem;
+    }
+}
+
+// Contenedor de formularios con transición
+.forms-wrapper {
+    position: relative;
+    width: 100%;
+    height: auto;
+    transition: transform 0.6s ease-in-out;
+
+    .form-content {
+        position: relative;
+        width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.3s ease-in-out, transform 0.6s ease-in-out;
+        
+        // Formulario de reset inicialmente oculto
+        &.reset-form {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            opacity: 0;
+        }
+    }
+
+    // Transición cuando está en modo reset
+    &.reset-mode {
+        .login-form {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        
+        .reset-form {
+            transform: translateX(-100%);
+            opacity: 1;
+        }
+    }
+}
+
+// Asegurar posición relativa en el contenedor padre
+.col-md-8.col-lg-6 {
+    position: relative;
+}
+
+// Responsividad y mejoras visuales
+@media (max-width: 768px) {
+    .auth-container {
+        .container {
+            padding: 15px;
+        }
+    }
+
+    .forms-wrapper {
+        .form-content {
+            box-shadow: none;
+            padding: 15px;
+            
+            &.reset-form {
+                position: relative;
+                left: 0;
+                transform: none !important;
+            }
+        }
+
+        &.reset-mode {
+            .login-form {
+                display: none;
+            }
+            
+            .reset-form {
+                transform: none !important;
+                opacity: 1;
+            }
+        }
+    }
+
+    .bg-image {
+        display: none;
+    }
+}

@@ -1,0 +1,749 @@
+<section class="mi-section">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        <mat-tab-group>
+                            <mat-tab label="{{'ui.perfil.basico' | translate }}">
+                                <div class="container">
+                                    <!-- Crear el template HTML del formulario -->
+                                    <form [formGroup]="datosBasicos" (ngSubmit)="onSubmitBasico()">
+                                        <div class="row mt-3">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="email" class="form-label">{{'ui.perfil.email' | translate
+                                                    }}</label>
+                                                <input type="email" id="email" formControlName="email"
+                                                    class="form-control" name="email"
+                                                    placeholder="{{'ui.inputs.emailEjemplo' | translate }}">
+                                                <!-- Mostrar un mensaje de error si el email no es válido -->
+                                                <div
+                                                    *ngIf="datosBasicos.get('email')!.invalid && datosBasicos.get('email')!.touched">
+                                                    <p *ngIf="datosBasicos.get('email')!.dirty && datosBasicos.get('email')!.invalid"
+                                                        class="text-danger">{{'ui.errores.emailRequerido' | translate }}
+                                                    </p>
+                                                    <p *ngIf="datosBasicos.get('email')!.dirty && datosBasicos.get('email')!.errors?.['pattern']"
+                                                        class="text-danger">{{'ui.errores.emailInvalido' | translate }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="telefono" class="form-label">{{'ui.perfil.telefono' |
+                                                    translate }}</label>
+                                                <input type="tel" id="telefono" formControlName="telefono"
+                                                    class="form-control" name="telefono" placeholder="telefono">
+                                                <!-- Mostrar un mensaje de error si el teléfono no es válido -->
+                                                <div
+                                                    *ngIf="datosBasicos.get('telefono')!.invalid && datosBasicos.get('telefono')!.touched">
+                                                    <p *ngIf="datosBasicos.get('telefono')!.dirty && datosBasicos.get('telefono')!.invalid"
+                                                        class="text-danger">{{'ui.errores.telefonoRequerido' | translate
+                                                        }}</p>
+                                                    <p *ngIf="datosBasicos.get('telefono')!.dirty && datosBasicos.get('telefono')!.errors?.['pattern']"
+                                                        class="text-danger">{{'ui.errores.emailinvalido' | translate }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" value=""
+                                                        id="esTrabajador" name="esTrabajador"
+                                                        formControlName="esTrabajador">
+                                                    <label class="form-check-label" for="esTrabajador">
+                                                        {{'ui.perfil.trabajando' | translate }}
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" value=""
+                                                        id="esEstudiante" name="esEstudiante"
+                                                        formControlName="esEstudiante">
+                                                    <label class="form-check-label" for="esEstudiante">
+                                                        {{'ui.perfil.estudiando' | translate }}
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" value=""
+                                                        id="sindicado" name="sindicado" formControlName="sindicado">
+                                                    <label class="form-check-label" for="sindicado">
+                                                        {{'ui.perfil.sindicado' | translate }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="mb-3">
+                                            <h5 class="text-start">{{'ui.perfil.residencia' | translate }}</h5>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="comunidad" class="form-label">{{'ui.perfil.comunidad' |
+                                                        translate }}</label>
+                                                    <select id="comunidad" class="form-control"
+                                                        formControlName="comunidadAutonoma"
+                                                        (change)="cambiaComunidad($any($event.target).value)">
+                                                        <option disabled value=0>{{'ui.inputs.seleccionaComunidad' |
+                                                            translate }}</option>
+                                                        <option *ngFor="let c of comunidadesAutonomas" [value]="c.id">
+                                                            {{c.nombre}}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="provincia" class="form-label">{{'ui.perfil.provincia' |
+                                                        translate }}</label>
+                                                    <select id="provincia" class="form-control"
+                                                        formControlName="provincia"
+                                                        (change)="cambiaProvincia($any($event.target).value)">
+                                                        <option disabled value="0">{{'ui.inputs.seleccionaProvincia' |
+                                                            translate }}</option>
+                                                        <option *ngFor="let p of provincias" [value]="p.id">
+                                                            {{p.nombre}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="municipio" class="form-label">{{'ui.perfil.municipio' |
+                                                        translate }}</label>
+                                                    <select id="municipio" class="form-control"
+                                                        formControlName="municipio">
+                                                        <option disabled value="0">{{'ui.inputs.seleccionaMunicipio' |
+                                                            translate }}</option>
+                                                        <option *ngFor="let m of municipios" [value]="m.id">
+                                                            {{m.nombre}}</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon1">{{'ui.perfil.direccion' |
+                                                translate }}</span>
+                                            <input type="text" class="form-control" placeholder="Escribe tu dirección"
+                                                aria-label="Dirección" aria-describedby="basic-addon1"
+                                                formControlName="direccion">
+                                        </div>
+                                        <!-- Nueva barra separadora antes de la sección idiomas-->
+                                        <hr>
+                                        <div class="mb-3">
+                                            <h5 class="text-start">{{ 'ui.perfil.idiomas' | translate }}
+                                            </h5>
+                                        </div>
+
+                                        <div formArrayName="idiomas">
+                                            <div class="row mb-3"
+                                                *ngFor="let idioma of idiomas.controls; let i = index"
+                                                [formGroupName]="i">
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="idioma{{i}}" class="form-label">{{
+                                                        'ui.perfil.idioma' | translate }}</label>
+                                                    <select id="idioma{{i}}" class="form-control"
+                                                        formControlName="idioma">
+                                                        <option disabled value="0">{{ 'ui.inputs.seleccionaIdioma' |
+                                                            translate }}</option>
+                                                        <option *ngFor="let h of idiomasDisponibles[i]"
+                                                            [value]="h.id">{{ h.nombre }}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="nivel{{i}}" class="form-label">{{ 'ui.perfil.nivel' |
+                                                        translate }}</label>
+                                                    <select id="nivel{{i}}" class="form-control" formControlName="nivel"
+                                                        required>
+                                                        <option disabled value="0">{{ 'ui.inputs.seleccionaNivelIdioma' |
+                                                            translate }}</option>
+                                                        <option *ngFor="let nivel of nivelesIdioma" [value]="nivel">{{
+                                                            nivel }}</option>
+                                                    </select>
+                                                    <div
+                                                        *ngIf="idioma.get('nivel')!.invalid && idioma.get('nivel')!.touched">
+                                                        <p class="text-danger">{{ 'ui.errores.descripcionRequerida' |
+                                                            translate }}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 mb-3 d-flex align-items-end">
+                                                    <button type="button" class="btn btn-danger"
+                                                        (click)="eliminarIdioma(i)">
+                                                        {{ 'ui.botones.eliminar' | translate }}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-add-habilidad"
+                                                    (click)="agregarIdioma()">
+                                                    <i class="fas fa-plus-circle"></i> {{ 'ui.botones.agregarIdioma'
+                                                    | translate }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Nueva barra separadora antes de la sección habilidades -->
+                                        <hr>
+
+                                        <!-- Nuevo apartado para habilidades opcionales -->
+                                        <div class="mb-3">
+                                            <h5 class="text-start">{{ 'ui.perfil.habilidadesOpcionales' | translate }}
+                                            </h5>
+                                        </div>
+
+                                        <div formArrayName="habilidades">
+                                            <div class="row mb-3"
+                                                *ngFor="let habilidad of habilidades.controls; let i = index"
+                                                [formGroupName]="i">
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="habilidad{{i}}" class="form-label">{{
+                                                        'ui.perfil.habilidad' | translate }}</label>
+                                                    <select id="habilidad{{i}}" class="form-control"
+                                                        formControlName="habilidad">
+                                                        <option disabled value="0">{{ 'ui.inputs.seleccionaHabilidad' |
+                                                            translate }}</option>
+                                                        <option *ngFor="let h of habilidadesDisponibles[i]"
+                                                            [value]="h.id">{{ h.nombre }}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6 mb-3">
+                                                    <label for="descripcion{{i}}" class="form-label">{{
+                                                        'ui.perfil.descripcion' | translate }}</label>
+                                                    <input type="text" id="descripcion{{i}}" class="form-control"
+                                                        formControlName="descripcion" required>
+                                                    <div
+                                                        *ngIf="habilidad.get('descripcion')!.invalid && habilidad.get('descripcion')!.touched">
+                                                        <p class="text-danger">{{ 'ui.errores.descripcionRequerida' |
+                                                            translate }}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 mb-3 d-flex align-items-end">
+                                                    <button type="button" class="btn btn-danger"
+                                                        (click)="eliminarHabilidad(i)">
+                                                        {{ 'ui.botones.eliminar' | translate }}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-add-habilidad"
+                                                    (click)="agregarHabilidad()"
+                                                    [disabled]="!todosSelectsSeleccionados()">
+                                                    <i class="fas fa-plus-circle"></i> {{ 'ui.botones.agregarHabilidad'
+                                                    | translate }}
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+                                        <div class="row">
+                                            <!-- Botón para enviar el formulario -->
+                                            <div class="col-md-4 offset-md-4 mt-1">
+                                                <button type="submit" [disabled]="!datosBasicos.valid"
+                                                    class="btn btn-danger">{{ 'ui.botones.actualizarPerfil' | translate
+                                                    }}</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </mat-tab>
+                            <!-- Pestaña de Datos de Trabajo -->
+                            <mat-tab *ngIf="datosBasicos.get('esTrabajador')?.value == true" label="Datos trabajo">
+                                <div class="container">
+                                    <form [formGroup]="datosTrabajo" (ngSubmit)="onSubmitTrabajo()">
+                                        <div class="row mt-3">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="actividadEconomica"
+                                                    class="form-label">{{'ui.perfil.actividadEconomica' | translate
+                                                    }}</label>
+                                                <select id="actividadEconomica" class="form-control"
+                                                    formControlName="actividadEconomica">
+                                                    <option disabled value="0">
+                                                        {{'ui.inputs.seleccionaActividadEconomica' |
+                                                        translate }}
+                                                    </option>
+                                                    <option *ngFor="let t of actividadesEconomicas" [value]="t.id">
+                                                        {{t.nombre}}</option>
+                                                </select>
+                                                <div
+                                                    *ngIf="datosTrabajo.get('actividadEconomica')!.invalid && datosTrabajo.get('actividadEconomica')!.touched">
+                                                    <p *ngIf="datosTrabajo.get('actividadEconomica')!.dirty && datosTrabajo.get('actividadEconomica')!.invalid"
+                                                        class="text-danger">{{'ui.errores.actividadEconomicaRequerida' |
+                                                        translate}}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="tipoContrato" class="form-label">{{'ui.perfil.tipoContrato'
+                                                    | translate }}</label>
+                                                <select id="tipoContrato" class="form-control"
+                                                    formControlName="tipoContrato">
+                                                    <option disabled value="0">{{'ui.inputs.seleccionaTipoContrato' |
+                                                        translate }}
+                                                    <option *ngFor="let t of tiposContratos" [value]="t.id">{{t.nombre}}
+                                                    </option>
+                                                </select>
+                                                <div
+                                                    *ngIf="datosTrabajo.get('tipoContrato')!.invalid && datosTrabajo.get('tipoContrato')!.touched">
+                                                    <p *ngIf="datosTrabajo.get('tipoContrato')!.dirty && datosTrabajo.get('tipoContrato')!.invalid"
+                                                        class="text-danger">{{'ui.errores.tipoContratoRequerido' |
+                                                        translate
+                                                        }}
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 mb-3">
+                                                <label for="modalidadTrabajo"
+                                                    class="form-label">{{'ui.perfil.modalidadTrabajo' | translate
+                                                    }}</label>
+                                                <select id="modalidadTrabajo" class="form-control"
+                                                    formControlName="modalidadTrabajo">
+                                                    <option disabled value="0">{{'ui.inputs.seleccionaModalidadTrabajo'
+                                                        |
+                                                        translate }}
+                                                    </option>
+                                                    <option *ngFor="let t of modalidadesTrabajo" [value]=t.id>
+                                                        {{t.nombre}}</option>
+                                                </select>
+                                                <div
+                                                    *ngIf="datosTrabajo.get('modalidadTrabajo')!.invalid && datosTrabajo.get('modalidadTrabajo')!.touched">
+                                                    <p *ngIf="datosTrabajo.get('modalidadTrabajo')!.dirty && datosTrabajo.get('modalidadTrabajo')!.invalid"
+                                                        class="text-danger">{{'ui.errores.modalidadTrabajoRequerida' |
+                                                        translate
+                                                        }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="profesion" class="form-label">{{'ui.perfil.profesion' |
+                                                    translate
+                                                    }}</label>
+                                                <input type="text" id="profesion" formControlName="profesion"
+                                                    class="form-control" name="profesion" placeholder="Profesión">
+                                                <!-- Mostrar un mensaje de error si el email no es válido -->
+                                                <div *ngIf="datosTrabajo.get('profesion')!.invalid && datosTrabajo.get('profesion')!.touched"
+                                                    class="text-danger">{{'ui.errores.profesionRequerido' | translate }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="existeOrganoRepresentacion" class="form-label"
+                                                    title="Existe organo representación de trabajadores">
+                                                    {{'ui.perfil.organoTrabajadores' | translate }}
+                                                </label>
+                                                <select id="existeOrganoRepresentacion" class="form-control"
+                                                    (change)="habilitaParticipa($any($event.target).value)"
+                                                    formControlName="existeOrganoRepresentacion">
+                                                    <option disabled value="0">{{'ui.inputs.seleccionaOpcion' |
+                                                        translate }}
+                                                    <option value="SI">{{'ui.inputs.si' | translate }}</option>
+                                                    <option value="NO">{{'ui.inputs.no' | translate }}</option>
+                                                    <option value="DESCONOCIDO">{{'ui.inputs.desconocido' | translate }}
+                                                    </option>
+                                                </select>
+                                                <!-- Mostrar un mensaje de error si el email no es válido -->
+                                                <div
+                                                    *ngIf="datosTrabajo.get('existeOrganoRepresentacion')!.invalid && datosTrabajo.get('existeOrganoRepresentacion')!.touched">
+                                                    <p *ngIf="datosTrabajo.get('existeOrganoRepresentacion')!.dirty && datosTrabajo.get('existeOrganoRepresentacion')!.invalid"
+                                                        class="text-danger">{{'ui.errores.seleccionaOpcion' | translate
+                                                        }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="participaOrganoRepresentacion" class="form-label"
+                                                    title="Participa en el organo de representación de trabajadores">
+                                                    {{'ui.perfil.participaOrgano' | translate }}
+                                                </label>
+                                                <select id="participaOrganoRepresentacion" class="form-control"
+                                                    formControlName="participaOrganoRepresentacion">
+                                                    <option disabled value="0">{{'ui.inputs.seleccionaOpcion' |
+                                                        translate }}
+                                                    <option value=true>{{'ui.inputs.si' | translate }}</option>
+                                                    <option value=false>{{'ui.inputs.no' | translate }}</option>
+                                                </select>
+                                                <div
+                                                    *ngIf="datosTrabajo.get('participaOrganoRepresentacion')!.invalid && datosTrabajo.get('participaOrganoRepresentacion')!.touched">
+                                                    <p *ngIf="datosTrabajo.get('participaOrganoRepresentacion')!.dirty && datosTrabajo.get('participaOrganoRepresentacion')!.invalid"
+                                                        class="text-danger">{{'ui.errores.seleccionaOpcion' | translate
+                                                        }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3" *ngIf="datosTrabajo.get('modalidadTrabajo')?.value !=  2">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="nombreCentroTrabajo"
+                                                    class="form-label">{{'ui.perfil.centroTrabajo' | translate
+                                                    }}</label>
+                                                <input type="text" id="nombreCentroTrabajo"
+                                                    formControlName="nombreCentroTrabajo" class="form-control"
+                                                    name="nombreCentroTrabajo" placeholder="Profesión">
+                                                <!-- Mostrar un mensaje de error si el email no es válido -->
+                                                <div
+                                                    *ngIf="datosTrabajo.get('nombreCentroTrabajo')!.invalid && datosTrabajo.get('nombreCentroTrabajo')!.touched">
+                                                    <p *ngIf="datosTrabajo.get('nombreCentroTrabajo')!.dirty && datosTrabajo.get('nombreCentroTrabajo')!.invalid"
+                                                        class="text-danger">{{'ui.errores.centroTrabajoRequerido' |
+                                                        translate
+                                                        }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="numeroTrabajadoresCentroTrabajo"
+                                                    class="form-label">{{'ui.perfil.numeroTrabajadoresCentro' |
+                                                    translate }}</label>
+                                                <input type="number" id="numeroTrabajadoresCentroTrabajo"
+                                                    formControlName="numeroTrabajadoresCentroTrabajo"
+                                                    class="form-control" name="numeroTrabajadoresCentroTrabajo"
+                                                    placeholder="Profesión">
+                                                <!-- Mostrar un mensaje de error si el email no es válido -->
+                                                <div
+                                                    *ngIf="datosTrabajo.get('numeroTrabajadoresCentroTrabajo')!.invalid && datosTrabajo.get('numeroTrabajadoresCentroTrabajo')!.touched">
+                                                    <p *ngIf="datosTrabajo.get('numeroTrabajadoresCentroTrabajo')!.dirty && datosTrabajo.get('numeroTrabajadoresCentroTrabajo')!.invalid"
+                                                        class="text-danger">
+                                                        {{'ui.errores.numeroTrabajadoresCentroRequerido' | translate
+                                                        }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="direccionCentroTrabajo"
+                                                    class="form-label">{{'ui.perfil.direccionCentro' | translate
+                                                    }}</label>
+                                                <input type="text" placeholder="Escribe la dirección"
+                                                    id="direccionCentroTrabajo" formControlName="direccionCentroTrabajo"
+                                                    class="form-control" name="direccionCentroTrabajo">
+                                                <!-- Mostrar un mensaje de error si el email no es válido -->
+                                                <div
+                                                    *ngIf="datosTrabajo.get('direccionCentroTrabajo')!.invalid && datosTrabajo.get('direccionCentroTrabajo')!.touched">
+                                                    <p *ngIf="datosTrabajo.get('direccionCentroTrabajo')!.dirty && datosTrabajo.get('direccionCentroTrabajo')!.invalid"
+                                                        class="text-danger">{{'ui.errores.direccionCentroRequerido' |
+                                                        translate
+                                                        }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="nombreEmpresa" class="form-label">{{'ui.perfil.empresa' |
+                                                    translate }}</label>
+                                                <input type="text" id="nombreEmpresa" formControlName="nombreEmpresa"
+                                                    class="form-control" name="nombreEmpresa"
+                                                    placeholder="Nombre de la empresa">
+                                                <div
+                                                    *ngIf="datosTrabajo.get('nombreEmpresa')!.invalid && datosTrabajo.get('nombreEmpresa')!.touched">
+                                                    <p *ngIf="datosTrabajo.get('nombreEmpresa')!.dirty && datosTrabajo.get('nombreEmpresa')!.invalid"
+                                                        class="text-danger">{{'ui.errores.empresaRequerida' | translate
+                                                        }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="numeroTrabajadores"
+                                                    class="form-label">{{'ui.perfil.numeroTrabajadores' | translate
+                                                    }}</label>
+                                                <input type="number" id="numeroTrabajadores"
+                                                    formControlName="numeroTrabajadores" class="form-control"
+                                                    name="numeroTrabajadores"
+                                                    placeholder="Número total de trabajadores">
+                                                <div
+                                                    *ngIf="datosTrabajo.get('numeroTrabajadores')!.invalid && datosTrabajo.get('numeroTrabajadores')!.touched">
+                                                    <p *ngIf="datosTrabajo.get('numeroTrabajadores')!.dirty && datosTrabajo.get('numeroTrabajadores')!.invalid"
+                                                        class="text-danger">{{'ui.errores.numeroTrabajadoresRequerido' |
+                                                        translate
+                                                        }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="fechaInicioContrato"
+                                                    class="form-label">{{'ui.perfil.fechaInicioContrato' | translate
+                                                    }}</label>
+                                                <input type="date" id="fechaInicioContrato"
+                                                    formControlName="fechaInicioContrato" class="form-control"
+                                                    name="fechaInicioContrato"
+                                                    placeholder="Fecha de inicio del contrato">
+                                                <div
+                                                    *ngIf="datosTrabajo.get('fechaInicioContrato')!.invalid && datosTrabajo.get('fechaInicioContrato')!.touched">
+                                                    <p *ngIf="datosTrabajo.get('fechaInicioContrato')!.dirty && datosTrabajo.get('fechaInicioContrato')!.invalid"
+                                                        class="text-danger">{{'ui.errores.fechaInicioContratoRequerida'
+                                                        | translate
+                                                        }} </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Agrega aquí los campos de tu formulario para los datos de trabajo -->
+                                        <div class="row">
+                                            <div class="col-md-4 offset-md-4 mt-1">
+                                                <button type="submit" [disabled]="!datosTrabajo.valid"
+                                                    class="btn btn-danger">{{'ui.botones.actualizarPerfil' | translate
+                                                    }}</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </mat-tab>
+
+                            <!-- Pestaña de Datos de Estudio -->
+                            <mat-tab *ngIf="datosBasicos.get('esEstudiante')?.value == true">
+                                <ng-template mat-tab-label>
+                                    {{'ui.perfil.datosEstudios' | translate }}
+                                    <span *ngIf="!datosEstudio.valid"
+                                        class="badge rounded-pill bg-danger text-white notification ml-8">!</span>
+                                </ng-template>
+                                <div class="container">
+                                    <form [formGroup]="datosEstudio" (ngSubmit)="onSubmitEstudio()">
+                                        <!-- ComboBox para Tipo de Estudio -->
+                                        <div class="row mt-3">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="nivelesEstudio"
+                                                    class="form-label">{{'ui.perfil.nivelEducativo'
+                                                    | translate }}</label>
+                                                <select id="nivelesEstudio" class="form-control"
+                                                    formControlName="nivelEstudio"
+                                                    (change)="obtenerTiposDeEstudio($any($event.target).value,true)">
+                                                    <option disabled value="0">{{'ui.inputs.seleccionaNivel' |
+                                                        translate }}
+                                                    <option *ngFor="let t of nivelesEstudio" [value]="t.id">{{t.nombre}}
+                                                    </option>
+                                                </select>
+                                                <div
+                                                    *ngIf="datosEstudio.get('nivelEstudio')!.invalid && datosEstudio.get('nivelEstudio')!.touched">
+                                                    <p *ngIf="datosEstudio.get('nivelEstudio')!.dirty && datosEstudio.get('nivelEstudio')!.invalid"
+                                                        class="text-danger">{{'ui.errores.nivelEducativoRequerido' |
+                                                        translate
+                                                        }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3"
+                                                *ngIf="datosEstudio.get('nivelesEstudio')?.value != 0 && tiposDeEstudio.length > 0">
+                                                <label for="tipoEstudio" class="form-label">{{'ui.perfil.tipoEstudio'
+                                                    | translate }}</label>
+                                                <select id="tipoEstudio" class="form-control"
+                                                    formControlName="tipoEstudio"
+                                                    (change)="obtenerSubTiposDeEstudio($any($event.target).value,true)">
+                                                    <option disabled value="0">{{'ui.inputs.seleccionaTipo' | translate
+                                                        }}
+                                                    <option *ngFor="let tipo of tiposDeEstudio" [value]="tipo.id">
+                                                        {{tipo.nombre}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4 mb-3"
+                                                *ngIf="datosEstudio.get('tipoEstudio')?.value != 0 && subtiposDeEstudio.length > 0">
+                                                <label for="subtiposDeEstudio"
+                                                    class="form-label">{{'ui.perfil.subtipoEstudio'
+                                                    | translate }}</label>
+                                                <select id="subtiposDeEstudio" class="form-control"
+                                                    formControlName="subtiposDeEstudio">
+                                                    <option disabled value="0">{{'ui.inputs.seleccionaTipo' |
+                                                        translate }}
+                                                    <option *ngFor="let t of subtiposDeEstudio" [value]="t.id">
+                                                        {{t.nombre}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- TextBox para Nombre de Estudios -->
+                                        <div class="row mt-3">
+                                            <div class="col-md-4 mb-3">
+                                                <label for="nombreEstudios"
+                                                    class="form-label">{{'ui.perfil.nombreEstudio'
+                                                    | translate }}</label>
+                                                <input type="text" id="nombreEstudios" formControlName="nombreEstudios"
+                                                    class="form-control" name="nombreEstudios"
+                                                    placeholder="Ej: Magisterio"
+                                                    [ngClass]="{'is-invalid': datosEstudio.get('nombreEstudios')?.invalid && datosEstudio.get('nombreEstudios')?.touched}">
+                                                <div
+                                                    *ngIf="datosEstudio.get('nombreEstudios')!.invalid && datosEstudio.get('nombreEstudios')!.touched">
+                                                    <p *ngIf="datosEstudio.get('nombreEstudios')!.dirty && datosEstudio.get('nombreEstudios')!.invalid"
+                                                        class="text-danger">{{'ui.errores.nombreEstudioRequerido' |
+                                                        translate
+                                                        }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="nombreCentroEducativo"
+                                                    class="form-label">{{'ui.perfil.centroEstudio'
+                                                    | translate }}</label>
+                                                <input type="text" id="nombreCentroEducativo"
+                                                    formControlName="nombreCentroEducativo" class="form-control"
+                                                    name="nombreCentroEducativo" placeholder="Ej:Facultad educaión, UB"
+                                                    [ngClass]="{'is-invalid': datosEstudio.get('nombreCentroEducativo')?.invalid && datosEstudio.get('nombreCentroEducativo')?.touched}">
+                                                <div
+                                                    *ngIf="datosEstudio.get('nombreCentroEducativo')!.invalid && datosEstudio.get('nombreCentroEducativo')!.touched">
+                                                    <p *ngIf="datosEstudio.get('nombreCentroEducativo')!.dirty && datosEstudio.get('nombreCentroEducativo')!.invalid"
+                                                        class="text-danger">{{'ui.errores.centroEstudioRequerido' |
+                                                        translate
+                                                        }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <label for="anhoFinalizacion"
+                                                    class="form-label">{{'ui.perfil.anhoFinalizacion'
+                                                    | translate }}</label>
+                                                <select id="anhoFinalizacion" formControlName="anhoFinalizacion"
+                                                    class="form-control" name="anhoFinalizacion">
+                                                    <option *ngFor="let year of getFutureYears()" [value]="year">
+                                                        {{year}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-md-6 mb-3">
+                                                <div class="form-check form-check-inline">
+                                                    <label for="sindicatoEstudiantil"
+                                                        class="form-label">{{'ui.perfil.sindicatoEstudiantil'
+                                                        | translate }}</label>
+                                                    <input type="checkbox" id="sindicatoEstudiantil"
+                                                        formControlName="sindicatoEstudiantil" class="form-check-input"
+                                                        name="sindicatoEstudiantil">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Botón de Envío -->
+                                        <div class="row">
+                                            <div class="col-md-4 offset-md-4 mt-1">
+                                                <button type="submit" [disabled]="!datosEstudio.valid"
+                                                    class="btn btn-danger">{{'ui.botones.actualizarPerfil' | translate
+                                                    }}</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </mat-tab>
+                            <!-- Pestaña de Datos de Sindicación -->
+                            <mat-tab *ngIf="datosBasicos.get('sindicado')?.value == true">
+                                <ng-template mat-tab-label>
+                                    {{'ui.perfil.sindicacion' | translate }}
+                                    <span *ngIf="!datosSindicacion.valid"
+                                        class="badge rounded-pill bg-danger text-white notification ml-8">!</span>
+                                </ng-template>
+                                <div class="container">
+                                    <form [formGroup]="datosSindicacion" (ngSubmit)="onSubmitSindicacion()">
+                                        <!-- ComboBox para Tipo de Estudio -->
+                                        <div class="row mt-3">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="sindicatos" class="form-label">{{'ui.perfil.sindicato' |
+                                                    translate }}</label>
+                                                <select id="sindicatos" class="form-control" formControlName="sindicato"
+                                                    (change)="obtenerFederaciones($any($event.target).value)">
+                                                    <option disabled value=0>{{'ui.inputs.seleccionaSindicato' |
+                                                        translate }}</option>
+                                                    <option *ngFor="let t of sindicatos" [value]=t.id>{{t.nombre}}
+                                                    </option>
+                                                    <option value=-1>{{'ui.inputs.otros' | translate }}</option>
+                                                </select>
+                                                <div
+                                                    *ngIf="datosSindicacion.get('sindicato')!.invalid && datosSindicacion.get('sindicato')!.touched">
+                                                    <p *ngIf="datosSindicacion.get('sindicato')!.dirty && datosSindicacion.get('sindicato')!.invalid"
+                                                        class="text-danger">{{'ui.errores.sindicatoRequerido' |
+                                                        translate
+                                                        }} </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="federacion" class="form-label">{{'ui.perfil.federacion' |
+                                                    translate }}</label>
+                                                <select id="federacion" class="form-control"
+                                                    formControlName="federacion">
+                                                    <option disabled value="0">{{'ui.inputs.seleccionaFederacion' |
+                                                        translate }}</option>
+                                                    <option *ngFor="let tipo of federaciones" [value]=tipo.id>
+                                                        {{tipo.nombre}}</option>
+                                                    <option value=-1>{{'ui.inputs.otros' | translate }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3"
+                                            *ngIf="datosSindicacion.get('sindicato')?.value == -1 || datosSindicacion.get('federacion')?.value == -1">
+                                            <div class="col-md-6 mb-3"
+                                                *ngIf="datosSindicacion.get('sindicato')?.value == -1">
+                                                <label for="sindicatoOtros"
+                                                    class="form-label">{{'ui.perfil.nombreSindicato'
+                                                    | translate }}</label>
+                                                <input type="text" id="sindicatoOtros" formControlName="sindicatoOtros"
+                                                    class="form-control" name="sindicatoOtros"
+                                                    placeholder="Ej: Sindicato Obrero - SO">
+                                                <div
+                                                    *ngIf="datosSindicacion.get('sindicatoOtros')!.invalid && datosSindicacion.get('sindicatoOtros')!.touched">
+                                                    <p *ngIf="datosSindicacion.get('sindicatoOtros')!.dirty && datosSindicacion.get('sindicatoOtros')!.invalid"
+                                                        class="text-danger">{{'ui.errores.sindicatoRequerido' |
+                                                        translate
+                                                        }} </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="federacionOtros"
+                                                    class="form-label">{{'ui.perfil.nombreFederacion'
+                                                    | translate }}</label>
+                                                <input type="text" id="federacionOtros"
+                                                    formControlName="federacionOtros" class="form-control"
+                                                    name="federacionOtros" placeholder="Ej: Federación de industria">
+                                                <div
+                                                    *ngIf="datosSindicacion.get('federacionOtros')!.invalid && datosSindicacion.get('federacionOtros')!.touched">
+                                                    <p *ngIf="datosSindicacion.get('federacionOtros')!.dirty && datosSindicacion.get('federacionOtros')!.invalid"
+                                                        class="text-danger">{{'ui.errores.federacionRequerida' |
+                                                        translate
+                                                        }} </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="cargo" class="form-label">{{'ui.perfil.cargo' | translate
+                                                    }}</label>
+                                                <input type="text" id="cargo" formControlName="cargo"
+                                                    class="form-control" name="cargo"
+                                                    placeholder="{{'ui.perfil.cargoEjemplo' | translate }}">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="participaAreaJuventud" class="form-label"
+                                                    title="¿Participa en la A. Juventud?">
+                                                    {{'ui.perfil.participaAJuventud' | translate }}
+                                                </label>
+                                                <select id="participaAreaJuventud" class="form-control"
+                                                    formControlName="participaAreaJuventud"
+                                                    aria-label="Participación en el área de juventud">
+                                                    <option disabled value="0">{{'ui.inputs.seleccionaOpcion' |
+                                                        translate }}
+                                                    <option value=true>{{'ui.inputs.si' | translate }}</option>
+                                                    <option value=false>{{'ui.inputs.no' | translate }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- Botón de Envío -->
+                                        <div class="row">
+                                            <div class="col-md-4 offset-md-4 mt-1">
+                                                <button type="submit" [disabled]="!datosEstudio.valid"
+                                                    class="btn btn-danger">{{'ui.botones.actualizarPerfil' | translate
+                                                    }}</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </mat-tab>
+                        </mat-tab-group>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        <app-modal-recorte *ngIf="mostrarModal" [imageChangedEvent]="imageChangedEvent"
+                            (cerrar)="cerrarModal()" (confirmar)="confirmar($event)"></app-modal-recorte>
+                        <div class="profile-image-container position-relative">
+                            <img [src]="fotoPerfil" alt="fotoPerfil" class="rounded-circle img-fluid custom-style">
+                            <!-- Nuevo botón de cámara con label -->
+                            <label for="file-input" class="camera-icon">
+                                <i class="bi bi-camera-fill"></i>
+                            </label>
+                            <input id="file-input" type="file" (change)="onFileSelected($event)"
+                                placeholder="Foto de perfil" hidden />
+                        </div>
+                        <h5 class="my-3">{{this.m.nombre+' '+this.m.apellido+' '+this.m.apellido2}}</h5>
+                        <p class="text-muted mb-1">{{'ui.perfil.numCarnet' | translate}}{{this.m.numeroCarnet}}
+                        </p>
+                        <p class="text-muted mb-1">{{this.getFechaNacimiento()}}</p>
+                        <h6 class="my-3">{{this.m.comiteBase.nombre}}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

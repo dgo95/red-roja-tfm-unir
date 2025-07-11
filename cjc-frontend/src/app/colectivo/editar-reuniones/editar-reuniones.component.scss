@@ -1,0 +1,68 @@
+.posicion {
+    // desplaza el elemento hacia 250px a la derecha
+    right: 250px;
+}
+
+.form-check-label {
+    font-size: 0.9rem;
+    /* Tamaño de fuente igual al de las etiquetas de los select */
+    line-height: 1.2;
+    /* Ajuste de la altura de línea si es necesario */
+    /* Agregar cualquier otro estilo necesario para hacerlo coincidir con los select */
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    /* Esto alineará verticalmente el switch y la etiqueta */
+    gap: 0.5rem;
+    /* Ajusta el espacio entre los elementos */
+}
+
+/* Estilos para el formulario de invitados */
+.invitado-form-group {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* Ajusta el número de columnas según sea necesario */
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Estilos consistentes para todos los inputs */
+.invitado-input {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    /* Agregar cualquier otro estilo necesario para hacerlo coincidir con los demás inputs */
+}
+
+/* Ajustes adicionales para el checkbox de militante */
+.form-check-inline {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem;
+    align-items: center;
+}
+/* Ajustes adicionales para el formulario de invitados si es necesario */
+.input-group-text {
+    background-color: #fff; /* o el color de fondo que prefieras */
+  }
+  /* Estilos opcionales para botones si es necesario */
+.btn-icon {
+    background-color: transparent; /* Remueve el fondo */
+    border: none; /* Remueve el borde */
+  }
+  
+  .btn-icon:focus {
+    outline: none; /* Remueve el outline al hacer focus */
+    box-shadow: none; /* Remueve el box shadow al hacer focus */
+  }
+  /* Definir una clase para texto justificado a la izquierda */
+.texto-justificado-izquierda {
+    text-align: left;
+}
+.icon-plus-lg {
+    font-size: 24px;
+    color: rgb(112, 112, 112);
+}

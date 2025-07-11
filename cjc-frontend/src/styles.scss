@@ -1,0 +1,59 @@
+/* You can add global styles to this file, and also import other style files */
+@use './styles/custom-theme.scss' as *;
+@use 'ngx-toastr/toastr';
+@import 'bootstrap/dist/css/bootstrap.css';
+@import '@fortawesome/fontawesome-free/css/all.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+
+
+body {
+  font-size: 0.9rem;
+}
+.page-wrapper.toggled .sidebar {
+  left: -300px;
+}
+.sidebar .ps.ps--scrolling-y > .ps__rail-y, .sidebar > .ps.ps--scrolling-x > .ps__rail-x, .ps .ps__rail-x:hover, .ps .ps__rail-y:hover, .ps .ps__rail-x:focus, .ps .ps__rail-y:focus, .ps .ps__rail-x.ps--clicking, .ps .ps__rail-y.ps--clicking {
+  background-color: transparent !important;
+}
+.sidebar .ps.ps--active-y > .ps__rail-y:hover, .sidebar > .ps.ps--active-y > .ps__rail-y.ps--clicking {
+  width: 10px !important;
+}
+.ps__thumb-y {
+  background-color: #fff !important;
+  width: 6px !important;
+  border-radius: 0px !important;
+  opacity: 0.5;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* Estilo para agrandar el switch */
+.switch-lg .form-check-input {
+  width: 3em;
+  height: 1.5em;
+}
+// Sobrescribe el color principal de los botones PrimeNG con el danger de Bootstrap 5
+:root {
+  --primary-button-bg: #dc3545 !important;         // Danger Bootstrap 5
+  --primary-button-border: #dc3545 !important;
+  --primary-button-text-color: #fff !important;
+  --primary-button-hover-bg: #bb2d3b !important;   // Danger hover Bootstrap 5
+  --primary-button-hover-border: #b02a37 !important;
+}
+
+.p-button.p-button-primary,
+.p-buttonset .p-button.p-button-primary {
+  background: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #fff !important;
+}
+
+.p-button.p-button-primary:enabled:hover,
+.p-button.p-button-primary:focus,
+.p-buttonset .p-button.p-button-primary:enabled:hover,
+.p-buttonset .p-button.p-button-primary:focus {
+  background: #bb2d3b !important; // Danger hover Bootstrap 5
+  border-color: #b02a37 !important;
+  color: #fff !important;
+}

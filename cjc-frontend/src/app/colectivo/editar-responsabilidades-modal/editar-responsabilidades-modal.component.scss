@@ -1,0 +1,148 @@
+.modal-header,
+.modal-footer {
+    background-color: #f8f9fa;
+    /* Un color de fondo más claro para la cabecera y el pie */
+    border-bottom: 1px solid #e9ecef;
+    /* Un borde sutil */
+}
+
+.modal-title {
+    color: #495057;
+    /* Un color oscuro para el título que proporciona contraste */
+}
+
+.modal-body {
+    padding: 2rem;
+    /* Más espacio interior para respirar */
+}
+
+.form-group {
+    margin-bottom: 1rem;
+    /* Espacio entre los form-group */
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    /* Un tamaño de fuente más pequeño para las etiquetas */
+    color: #6c757d;
+    /* Un color más suave para las etiquetas */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: .1rem;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    height: 2.9rem;
+    /* Establece una altura fija para asegurar la alineación */
+    overflow: hidden;
+    /* Previene que el contenido desborde si es demasiado largo */
+}
+
+/* Otra opción es utilizar flexbox para alinear los elementos internos verticalmente: */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /* Alinea el contenido al principio del contenedor flex */
+}
+
+.form-group select {
+    margin-top: auto;
+    /* Empuja el select hacia abajo, manteniendo el espacio arriba */
+}
+
+
+.form-control {
+    border-radius: 0.25rem;
+    /* Bordes redondeados para los select */
+    border: 1px solid #ced4da;
+    /* Un color de borde más suave */
+    font-size: 0.8rem;
+    /* Tamaño de fuente más pequeño para los select */
+}
+
+.btn {
+    border-radius: 0.25rem;
+    /* Bordes redondeados para los botones */
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    /* Un gris estándar para el botón cancelar */
+    color: #fff;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    /* El azul de Bootstrap para el botón aceptar */
+    color: #fff;
+    border-color: #007bff;
+}
+
+/* Ajustes específicos para mejorar la responsividad en dispositivos móviles */
+@media (max-width: 768px) {
+    .modal-dialog {
+        width: 95%;
+        max-width: none;
+    }
+}
+
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 55%;
+        /* Aumenta este valor para una ventana más ancha */
+    }
+}
+
+@media (min-width: 992px) {
+    .modal-dialog {
+        max-width: 55%;
+        /* Aumenta este valor para una ventana más ancha en pantallas grandes */
+
+    }
+}
+
+.btn-toggle {
+    background-color: transparent;
+    /* Elimina el fondo del botón */
+    color: #63635c;
+    /* Color beige */
+    border: none;
+    /* Elimina el borde del botón */
+    font-size: 1.5rem;
+    /* Ajusta el tamaño del texto/icono según necesites */
+    line-height: 1;
+    /* Esto asegura que el icono esté centrado verticalmente */
+    padding: 0.5rem;
+    /* Ajusta el relleno según necesites */
+}
+
+.btn-toggle:focus {
+    outline: none;
+    /* Elimina el contorno que aparece al hacer clic */
+    box-shadow: none;
+    /* Opcional: elimina el sombreado que se aplica al hacer clic */
+}
+
+/* Asegúrate de que los iconos o caracteres '+' y '-' no tengan espacios excesivos alrededor */
+.btn-toggle span {
+    display: inline-block;
+    margin: 0;
+    /* Elimina cualquier margen por defecto */
+    padding: 0;
+    /* Elimina cualquier relleno por defecto */
+    vertical-align: middle;
+    /* Centra verticalmente el icono/caracter */
+}
+.form-check-label {
+    font-size: 0.9rem; /* Tamaño de fuente igual al de las etiquetas de los select */
+    color: #6c757d; /* Color igual al de las etiquetas de los select */
+    line-height: 1.2; /* Ajuste de la altura de línea si es necesario */
+    /* Agregar cualquier otro estilo necesario para hacerlo coincidir con los select */
+}
+.form-check {
+    display: flex;
+    align-items: center; /* Esto alineará verticalmente el switch y la etiqueta */
+    gap: 0.5rem; /* Ajusta el espacio entre los elementos */
+}

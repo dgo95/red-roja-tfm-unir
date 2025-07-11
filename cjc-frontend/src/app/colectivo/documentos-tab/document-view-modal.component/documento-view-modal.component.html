@@ -1,0 +1,48 @@
+<p-dialog
+  header="Vista previa del documento"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '80vw', height: '80vh' }"
+  appendTo="body"
+  (onHide)="handleHide()"
+>
+  <!-- loader / error -->
+  <ng-container *ngIf="isLoading">Cargando…</ng-container>
+  <p class="text-danger" *ngIf="error">{{ error }}</p>
+
+  <!-- visor -->
+  <ng-container *ngIf="!isLoading && !error">
+    <ng-container [ngSwitch]="previewType">
+
+      <!-- PDF -->
+      <ngx-extended-pdf-viewer
+        *ngSwitchCase="'pdf'"
+        [src]="$any(fileUrlSafe)"
+        useBrowserLocale="true"
+        height="100%">
+      </ngx-extended-pdf-viewer>
+
+      <!-- DOCX -->
+      <div *ngSwitchCase="'docx'" #docxContainer style="height:100%; overflow:auto"></div>
+
+      <!-- XLSX -->
+      <div *ngSwitchCase="'xlsx'" style="height:100%; overflow:auto" [innerHTML]="xlsxHtml"></div>
+
+      <!-- Imágenes -->
+      <div *ngSwitchCase="'image'" class="flex justify-content-center align-items-center" style="height:100%">
+        <img [src]="fileUrlSafe" alt="Imagen" style="max-width:100%; max-height:100%" />
+      </div>
+
+      <!-- TXT -->
+      <textarea
+        *ngSwitchCase="'text'"
+        [value]="textContent"
+        readonly
+        style="width:100%; height:100%; border:none; resize:none;">
+      </textarea>
+
+      <!-- No soportado -->
+      <p *ngSwitchDefault>No se dispone de visor para este tipo de fichero.</p>
+    </ng-container>
+  </ng-container>
+</p-dialog>

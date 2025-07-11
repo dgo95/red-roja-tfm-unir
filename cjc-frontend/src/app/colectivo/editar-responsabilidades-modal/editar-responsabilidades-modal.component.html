@@ -1,0 +1,77 @@
+<!-- editar-responsabilidades-modal.component.html -->
+<div class="modal show d-block" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar responsabilidades</h5>
+        <button type="button" class="btn-close" (click)="cancelar()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Aquí comienza la grilla de dos columnas para los tres primeros select -->
+        <form [formGroup]="form" (ngSubmit)="aceptar()">
+          <div class="row">
+            @for (responsibility of responsabilidades; track responsibility; let i = $index) {
+              <div class="col-xs-12 col-md-4">
+                @if (i < 3) {
+                  <div class="form-group">
+                    <label for="responsibility{{i}}">{{responsibility.nombre}}:</label>
+                    <select class="form-control" name="responsibility{{i}}" id="responsibility{{i}}"
+                      formControlName="{{responsibility.id}}">
+                      @for (item of militantes; track item) {
+                        <option value={{item.id}}>{{item.nombre}}</option>
+                      }
+                    </select>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+          <!-- Aquí termina la grilla de dos columnas para los tres primeros select -->
+          <!-- Botón para controlar el desplegable -->
+          <button type="button" class="btn btn-toggle align-left mb-3" (click)="toggleDesplegable()">
+            @if (!isDesplegableAbierto) {
+              <span>+</span>
+            }
+            @if (isDesplegableAbierto) {
+              <span>-</span>
+            }
+          </button>
+          <!-- Contenedor para los select adicionales dentro del desplegable -->
+          @if (isDesplegableAbierto) {
+            <div>
+              <div class="row">
+                @for (responsibility of responsabilidadesFiltradas; track responsibility; let i = $index) {
+                  <div
+                    class="col-xs-12 col-md-4">
+                    <div class="form-group">
+                      <label for="responsibility{{i}}">{{responsibility.nombre}}:</label>
+                      <select class="form-control" name="responsibility{{i}}" id="responsibility{{i}}"
+                        formControlName="{{responsibility.id}}">
+                        <option value="0">(Vacio)</option>
+                        @for (item of militantes; track item) {
+                          <option value="{{item.id}}">{{item.nombre}}
+                          </option>
+                        }
+                      </select>
+                    </div>
+                  </div>
+                }
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="responsabilidadFrenteMasas"  formControlName="responsabilidadFrenteMasas">
+                  <label class= "form-check-label" for="responsabilidadFrenteMasas">Agrupar responsabilidades</label>
+                </div>
+              </div>
+            </div>
+          }
+        </form>
+      </div>
+      <!-- Aquí termina la grilla de dos columnas -->
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="cancelar()">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-danger" (click)="aceptar()">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

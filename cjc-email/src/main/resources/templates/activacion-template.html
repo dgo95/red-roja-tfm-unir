@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Activación de Cuenta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #dddddd;
+        }
+        .header h2 {
+            margin: 0;
+            color: #333333;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .content p {
+            color: #666666;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #ff0000;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #b30000;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            border-top: 1px solid #dddddd;
+            margin-top: 20px;
+            color: #999999;
+        }
+        .signature {
+            text-align: center;
+            margin-top: 20px;
+            color: #ff0000;
+        }
+        .signature img {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>¡Bienvenido, [[${nombre}]]!</h2>
+    </div>
+    <div class="content">
+        <p>Tu cuenta ha sido creada correctamente en RedRoja. Por favor, haz clic en el siguiente enlace para activar tu cuenta:</p>
+        <p>
+            <a class="btn" th:href="@{${activationLink}}">Activa tu cuenta</a>
+        </p>
+        <p>Si el enlace no funciona, copia y pega la siguiente URL en tu navegador:</p>
+        <p th:text="${activationLink}"></p>
+    </div>
+    <div class="footer">
+        <p>Gracias,<br>El [[${colectivo}]]</p>
+    </div>
+    <div class="signature">
+        <p><b>¡NO HAY TEORÍA REVOLUCIONARIA SIN PRÁCTICA REVOLUCIONARIA!</b></p>
+        <img th:src="@{${#httpServletRequest.getContextPath()}/principal.png}" width="90" height="96" alt="logo de cjc"
+        <p><b>CJC - [[${colectivo}]]</b></p>
+    </div>
+</div>
+</body>
+</html>

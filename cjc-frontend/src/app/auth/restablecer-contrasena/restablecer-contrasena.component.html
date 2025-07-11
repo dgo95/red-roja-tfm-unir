@@ -1,0 +1,159 @@
+<div class="container-fluid ps-md-0">
+  <div class="row g-0">
+    <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+    <div class="col-md-8 col-lg-6">
+      <div class="login d-flex align-items-center py-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-9 col-lg-8 mx-auto">
+              <h3 class="login-heading mb-4">{{'ui.restablecerPass.titulo' | translate }}</h3>
+              @if (primeraParte) {
+                <div>
+                  @if (!mandado) {
+                    <div>
+                      <!-- Sign In Form -->
+                      <form [formGroup]="carnetForm" (ngSubmit)="enviarEmail()">
+                        <div class="form-floating mb-3">
+                          <input type="text" class="form-control" id="floatingEmail"
+                            placeholder="prueba@prueba.com" formControlName="carnet"
+                            [ngClass]="{ 'is-invalid': submitted && f.carnet.errors }"
+                            id="inputEmail4">
+                            @if (submitted && f.carnet.errors) {
+                              <div class="invalid-feedback">
+                                @if (f.carnet.errors.required) {
+                                  <div>{{'ui.errores.carnetRequerido' |
+                                  translate }}</div>
+                                }
+                              </div>
+                            }
+                            @if (errorServidor) {
+                              <div class="trampa">{{'ui.errores.servidor' |
+                              translate }}</div>
+                            }
+                            <label for="floatingEmail">{{'ui.inputs.carnet' | translate }}</label>
+                          </div>
+                          <div class="d-grid">
+                            <button [disabled]="isLoading"
+                              class="btn btn-lg btn btn-danger btn-login text-uppercase fw-bold mb-2"
+                              type="submit">
+                              @if (isLoading) {
+                                <div class="spinner-border text-light" role="status">
+                                  <span class="sr-only"></span>
+                                </div>
+                              }
+                              @if (!isLoading) {
+                                <div>{{'ui.botones.enviarEmailPass' | translate }}
+                                </div>
+                              }
+                            </button>
+                            <button
+                              class="btn btn-lg btn-secondary btn-login text-uppercase fw-bold mb-2"
+                              type="button" (click)="cancelar()">{{'ui.botones.cancelar' | translate}}
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    } @else {
+                      <div class="panel panel-info">
+                        <div class="panel-heading"><ng-icon name="bootstrapInfoCircle"></ng-icon> {{'ui.panel.info' |
+                      translate }} </div>
+                      <div class="panel-body">{{'ui.restablecerPass.infoPanel' | translate }}</div>
+                    </div>
+                    <link rel="stylesheet"
+                      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+                      <script
+                      src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+                      <script
+                      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+                    }
+                  </div>
+                } @else {
+                  <!-- Sign In Form -->
+                  @if (!mandado) {
+                    <div>
+                      <form [formGroup]="nuevaPassForm" (ngSubmit)="restablecerPass()">
+                        <div class="form-floating mb-3">
+                          <input type="password" class="form-control" id="floatingPassword"
+                            placeholder="1234" formControlName="password" class="form-control"
+                            [ngClass]="{ 'is-invalid': submitted && g.password.errors }"
+                            id="inputPassword4">
+                            @if (submitted && g.password.errors) {
+                              <div class="invalid-feedback">
+                                @if (g.password.errors.required) {
+                                  <div>
+                                    {{'ui.errores.contrasenaRequerida' |
+                                  translate }}</div>
+                                }
+                              </div>
+                            }
+                            <label for="floatingPassword">{{'ui.inputs.contrasena' | translate
+                            }}</label>
+                          </div>
+                          <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="floatingPassword1"
+                              placeholder="Contraseña" formControlName="confirmPassword"
+                              [ngClass]="{ 'is-invalid': submitted && g.confirmPassword.errors }"
+                              id="inputPassword41">
+                              @if (submitted && g.confirmPassword.errors) {
+                                <div class="invalid-feedback">
+                                  @if (g.confirmPassword.errors.required) {
+                                    <div>
+                                    {{'ui.errores.contrasenaRequerida' | translate }}</div>
+                                  }
+                                  @if (g.confirmPassword.errors.matchPassword) {
+                                    <div>
+                                    {{'ui.errores.matchPassword' | translate }}</div>
+                                  }
+                                </div>
+                              }
+                              @if (errorServidor) {
+                                <div class="trampa">{{'ui.errores.servidor' |
+                                  translate }}
+                                </div>
+                              }
+                              <label for="floatingPassword1">{{'ui.inputs.contrasena' | translate
+                              }}</label>
+                            </div>
+                            <div class="d-grid">
+                              <button [disabled]="isLoading"
+                                class="btn btn-lg btn btn-danger btn-login text-uppercase fw-bold mb-2"
+                                type="submit">
+                                @if (isLoading) {
+                                  <div class="spinner-border text-light" role="status">
+                                    <span class="sr-only"></span>
+                                  </div>
+                                }
+                                @if (!isLoading) {
+                                  <div>{{'ui.botones.restablecerPass' | translate }}
+                                  </div>
+                                }
+                              </button>
+                              <button
+                                class="btn btn-lg btn-secondary btn-login text-uppercase fw-bold mb-2"
+                                type="button" (click)="cancelar()">{{'ui.botones.cancelar' | translate}}
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                      } @else {
+                        <div class="panel panel-success">
+                          <div class="panel-heading"><ng-icon name="bootstrapCheckCircle"></ng-icon>
+                        {{'ui.panel.succesPanel' | translate }} </div>
+                        <div class="panel-body">{{'ui.restablecerPass.succesPanel' | translate }}</div>
+                      </div>
+                      <link rel="stylesheet"
+                        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+                        <script
+                        src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+                        <script
+                        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+                      }
+                    }
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

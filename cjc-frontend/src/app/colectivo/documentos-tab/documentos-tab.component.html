@@ -1,0 +1,252 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<!-- ❱❱ FILTROS + BÚSQUEDA ------------------------------------------------ -->
+<form [formGroup]="filtrosForm" class="container-fluid mt-3">
+  <div class="card shadow-sm mb-3 border-0">
+    <div class="card-body py-2 px-4">
+      <p-iconField class="w-100">
+        <p-inputIcon styleClass="pi pi-search" />
+        <input
+          type="text"
+          pInputText
+          pInputIconLeft
+          class="w-100"
+          formControlName="searchText"
+          placeholder="Buscar por título..."
+        />
+      </p-iconField>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4 border-0">
+    <div class="card-body py-3 px-4">
+      <div class="row gx-5 gy-4 align-items-end">
+        <!-- Nivel -->
+        <div class="col-sm-6 col-md-3">
+          <p-inputgroup class="w-100">
+            <p-inputgroup-addon>
+              <i class="pi pi-sitemap"></i>
+            </p-inputgroup-addon>
+            <p-select
+              [options]="niveles"
+              formControlName="nivel"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Nivel"
+              appendTo="body"
+              showClear
+              class="w-100"
+            ></p-select>
+          </p-inputgroup>
+        </div>
+
+        <!-- Confidencialidad -->
+        <div class="col-sm-6 col-md-3">
+          <p-inputgroup class="w-100">
+            <p-inputgroup-addon>
+              <i class="pi pi-lock"></i>
+            </p-inputgroup-addon>
+            <p-select
+              [options]="confidencialidades"
+              formControlName="confidencialidad"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Confidencialidad"
+              appendTo="body"
+              showClear
+              class="w-100"
+            ></p-select>
+          </p-inputgroup>
+        </div>
+
+        <!-- Tipo(s) -->
+        <div class="col-sm-6 col-md-3">
+          <p-inputgroup class="w-100">
+            <p-inputgroup-addon>
+              <i class="pi pi-tag"></i>
+            </p-inputgroup-addon>
+            <p-multiSelect
+              [options]="tipos"
+              formControlName="tipo"
+              optionLabel="label"
+              optionValue="value"
+              display="chip"
+              placeholder="Tipo(s)"
+              appendTo="body"
+              showClear
+              class="w-100"
+            ></p-multiSelect>
+          </p-inputgroup>
+        </div>
+
+        <!-- Categoría(s) -->
+        <div class="col-sm-6 col-md-3">
+          <p-inputgroup class="w-100">
+            <p-inputgroup-addon>
+              <i class="pi pi-folder"></i>
+            </p-inputgroup-addon>
+            <p-multiSelect
+              [options]="categorias"
+              formControlName="categoria"
+              optionLabel="label"
+              optionValue="value"
+              display="chip"
+              placeholder="Categoría(s)"
+              appendTo="body"
+              showClear
+              class="w-100"
+            ></p-multiSelect>
+          </p-inputgroup>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- ❱❱ TABLA ------------------------------------------------------------- -->
+<div class="table-responsive">
+  <p-table
+    [value]="documentos"
+    [lazy]="true"
+    [totalRecords]="totalRecords"
+    [loading]="loadingDocumentos"
+    [paginator]="true"
+    [rows]="rows"
+    [rowsPerPageOptions]="[5, 10, 20, 50]"
+    [first]="page * rows"
+    [sortField]="sortField"
+    [sortOrder]="sortOrder || 1"
+    sortMode="multiple"
+    responsiveLayout="scroll"
+    dataKey="id"
+    class="shadow-sm rounded"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} documentos"
+    (onLazyLoad)="onTableLazyLoad($event)"
+  >
+    <!-- Cabecera -->
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Confid.</th>
+        <th pSortableColumn="titulo">
+          Título <p-sortIcon field="titulo"></p-sortIcon>
+        </th>
+        <th pSortableColumn="fecha">
+          Fecha <p-sortIcon field="fecha"></p-sortIcon>
+        </th>
+        <th>Propietario</th>
+        <th>Ext.</th>
+        <th class="text-center">Acciones</th>
+      </tr>
+    </ng-template>
+
+    <!-- Filas -->
+    <ng-template pTemplate="body" let-doc>
+      <tr>
+        <!-- Confidencialidad -->
+        <td>
+          <p-tag
+            [severity]="severidadConfidencialidad(doc.confidencialidad)"
+            [value]="doc.confidencialidad"
+          ></p-tag>
+        </td>
+
+        <!-- Título -->
+        <td>
+          <span class="fw-semibold">
+            {{ getNombreSinExtension(doc.titulo) }}
+          </span>
+        </td>
+
+        <!-- Fecha -->
+        <td>
+          <span class="text-nowrap">
+            {{ doc.fecha | date: 'dd/MM/yyyy' }}
+          </span>
+        </td>
+
+        <!-- Propietario -->
+        <td>
+          <span class="text-muted">{{ doc.propietario }}</span>
+        </td>
+
+        <!-- Extensión -->
+        <td>
+          <ng-container [ngSwitch]="getExtension(doc.titulo)">
+            <span *ngSwitchCase="'pdf'" pTooltip="pdf"><i class="pi pi-file-pdf text-danger"
+                style="font-size: 1.2em;"></i></span>
+            <span *ngSwitchCase="'doc'" pTooltip="doc"><i class="pi pi-file-word text-primary"
+                style="font-size: 1.2em;"></i></span>
+            <span *ngSwitchCase="'docx'" pTooltip="docx"><i class="pi pi-file-word text-primary"
+                style="font-size: 1.2em;"></i></span>
+            <span *ngSwitchCase="'xls'" pTooltip="xls"><i class="pi pi-file-excel text-success"
+                style="font-size: 1.2em;"></i></span>
+            <span *ngSwitchCase="'xlsx'" pTooltip="xlsx"><i class="pi pi-file-excel text-success"
+                style="font-size: 1.2em;"></i></span>
+            <span *ngSwitchCase="'png'" pTooltip="png"><i class="pi pi-image text-info"
+                style="font-size: 1.2em;"></i></span>
+            <span *ngSwitchCase="'jpg'" pTooltip="jpg"><i class="pi pi-image text-info"
+                style="font-size: 1.2em;"></i></span>
+            <span *ngSwitchCase="'jpeg'" pTooltip="jpeg"><i class="pi pi-image text-info"
+                style="font-size: 1.2em;"></i></span>
+            <span *ngSwitchCase="'gif'" pTooltip="gif"><i class="pi pi-image text-info"
+                style="font-size: 1.2em;"></i></span>
+            <span *ngSwitchCase="'zip'" pTooltip="zip"><i class="pi pi-folder-open text-warning"
+                style="font-size: 1.2em;"></i></span>
+            <span *ngSwitchCase="'txt'" pTooltip="txt"><i class="pi pi-file" style="font-size: 1.2em;"></i></span>
+            <span *ngSwitchCase="'Otro'" pTooltip="Otro"><i class="pi pi-file" style="font-size: 1.2em;"></i><span
+                class="ms-2">Otro</span></span>
+            <span *ngSwitchDefault pTooltip="{{ getExtension(doc.titulo) }}"><i class="pi pi-file"
+                style="font-size: 1.2em;"></i></span>
+          </ng-container>
+        </td>
+
+        <!-- Acciones -->
+        <td class="text-center">
+          <p-splitButton
+            label="Ver"
+            icon="pi pi-eye"
+            class="p-button-sm p-button-rounded"
+            (onClick)="abrirDialogoVer(doc)"
+            [model]="getSplitMenuItemsCached(doc)"
+            menuStyleClass="p-menu-sm"
+            appendTo="body"
+          ></p-splitButton>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- ❱❱ MODAL SUBIR ------------------------------------------------------- -->
+<app-documento-upload-modal
+  [visible]="mostrarDialogoSubir"
+  (aceptar)="onSubidaAceptar($event)"
+  (cancelar)="mostrarDialogoSubir = false"
+></app-documento-upload-modal>
+
+<!-- ❱❱ MODAL VER --------------------------------------------------------- -->
+<app-documento-view-modal *ngIf="mostrarDialogoVer"
+  [visible]="mostrarDialogoVer"
+  [uuid]="uuid!"
+  (cancelar)="mostrarDialogoVer = false">
+</app-documento-view-modal>
+
+<!-- ❱❱ MODAL EDITAR ------------------------------------------------------ -->
+<app-documento-edit-modal *ngIf="mostrarDialogoEditar"
+   [visible]="mostrarDialogoEditar"
+   [documento]="documentoEditando!"
+   (actualizar)="onActualizarDocumento($event)"
+   (cancelar)="mostrarDialogoEditar = false">
+</app-documento-edit-modal>
+
+
+<!-- ❱❱ FAB ---------------------------------------------------------------- -->
+<button
+  pButton
+  type="button"
+  icon="pi pi-plus"
+  class="fab p-button-danger p-button-rounded p-button-lg"
+  (click)="abrirDialogoSubir()"
+></button>

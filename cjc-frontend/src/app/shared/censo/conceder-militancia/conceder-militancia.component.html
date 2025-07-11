@@ -1,0 +1,59 @@
+<div class="modal show d-block posicion" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Promocionar</h5>
+        <button type="button" class="btn-close" (click)="cancelar()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form">
+          <!-- Input Número de Carnet -->
+          <div class="mb-3 row">
+            <label for="numeroCarnet" class="col-sm-4 col-form-label">Número de Carnet</label>
+            <div class="col-sm-4">
+              <input id="numeroCarnet" type="text" class="form-control" formControlName="numeroCarnet"
+                maxlength="4" placeholder="Ingrese el número de carnet">
+              @if (form.get('numeroCarnet')?.invalid && form.get('numeroCarnet')?.touched) {
+                <div
+                  class="text-danger">
+                  El número de carnet debe tener 4 dígitos numéricos.
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Input Cuota -->
+          <div class="mb-3 row">
+            <label for="cuota" class="col-sm-4 col-form-label">Cuota (€)</label>
+            <div class="col-sm-4">
+              <input id="cuota" type="number" class="form-control" formControlName="cuota" min="5"
+                placeholder="Ingrese la cuota mínima de 5€">
+              @if (form.get('cuota')?.invalid && form.get('cuota')?.touched) {
+                <div class="text-danger">
+                  La cuota debe ser un entero mayor o igual a 5.
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Switch Activar Militante -->
+          <div class="mb-3 row align-items-center">
+            <label class="col-sm-4 col-form-label" for="activar">Activar Militante</label>
+            <div class="col-sm-8">
+              <div class="form-check form-switch d-flex align-items-center switch-lg">
+                <input class="form-check-input" type="checkbox" id="activar"
+                  formControlName="activar">
+                <label class="form-check-label ms-2" for="activar"></label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+        <button type="submit" [disabled]="!form.valid" class="btn btn-danger"
+        (click)="aceptar()">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

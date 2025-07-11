@@ -1,0 +1,98 @@
+<div class="modal show d-block posicion" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ajustes Avanzados</h5>
+        <button type="button" class="btn-close" (click)="cancelar()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="form">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="militanteId" class="form-label">Militante ID</label>
+              <input id="militanteId" type="text" class="form-control" formControlName="militanteId"
+                readonly>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="codigoActivacion" class="form-label">Código de Activación</label>
+              <input id="codigoActivacion" type="text" class="form-control"
+                formControlName="codigoActivacion" readonly>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="fechaCreacion" class="form-label">Fecha de Creación</label>
+              <input id="fechaCreacion" type="text" class="form-control" formControlName="fechaCreacion"
+                readonly>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="fechaModificacion" class="form-label">Fecha de Modificación</label>
+              <input id="fechaModificacion" type="text" class="form-control"
+                formControlName="fechaModificacion" readonly>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="ultimoIntentoLogin" class="form-label">Último Intento de Login</label>
+              <input id="ultimoIntentoLogin" type="text" class="form-control"
+                formControlName="ultimoIntentoLogin" readonly>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="idiomaPreferido" class="form-label">Idioma Preferido</label>
+              <select id="idiomaPreferido" class="form-select" formControlName="idiomaPreferido">
+                <option disabled value="">Seleccione un idioma</option>
+                @for (idioma of idiomas; track idioma) {
+                  <option [value]="idioma.key">{{ idioma.value }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3 form-check form-switch switch-lg">
+              <input class="form-check-input" type="checkbox" id="caducada" formControlName="caducada">
+              <label class="form-check-label" for="caducada">Caducada</label>
+            </div>
+            <div class="col-md-6 mb-3 form-check form-switch switch-lg">
+              <input class="form-check-input" type="checkbox" id="bloqueada" formControlName="bloqueada">
+              <label class="form-check-label" for="bloqueada">Bloqueada</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3 form-check form-switch switch-lg">
+              <input class="form-check-input" type="checkbox" id="credencialesExpiradas"
+                formControlName="credencialesExpiradas">
+              <label class="form-check-label" for="credencialesExpiradas">Credenciales Expiradas</label>
+            </div>
+            <div class="col-md-6 mb-3 form-check form-switch switch-lg">
+              <input class="form-check-input" type="checkbox" id="habilitado"
+                formControlName="habilitado">
+              <label class="form-check-label" for="habilitado">Habilitado</label>
+            </div>
+          </div>
+          <!-- Mostrar botón solo si habilitado es false -->
+          @if (!form.get('habilitado')?.value) {
+            <div class="row mb-3">
+              <div class="col-md-6 ms-auto"> <!-- ms-auto alinea el contenido a la derecha -->
+                <button type="button" class="btn btn-primary w-100" (click)="habilitarUsuario()" [disabled]="habilitando">
+                  @if (habilitando) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  }
+                  {{ habilitando ? 'Enviando...' : 'Enviar email activación' }}
+                </button>
+              </div>
+            </div>
+          }
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+        <button type="submit" [disabled]="!form.valid" class="btn btn-danger"
+        (click)="aceptar()">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>

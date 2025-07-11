@@ -1,0 +1,214 @@
+.mi-section {
+    background-color: #eee;
+}
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+.container {
+    min-height: 100vh;
+}
+
+.btn-add-habilidad {
+    background-color: #6c757d; /* Verde suave */
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s ease;
+}
+
+/* Ajustes específicos para el componente de perfil */
+
+
+.btn-add-habilidad i {
+    margin-right: 0.5rem;
+}
+
+.btn-add-habilidad:hover {
+    background-color: #5a6268; /* Verde un poco más oscuro al hacer hover */
+}
+
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.is-valid {
+    border-color: #28a745;
+}
+
+.is-valid:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.is-invalid {
+    border-color: #dc3545;
+}
+
+.invalid-tooltip {
+    position: absolute;
+    top: 100%;
+    z-index: 5;
+    display: none;
+    max-width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.1rem;
+    font-size: 0.875rem;
+    line-height: 1;
+    color: #fff;
+    background-color: rgba(220, 53, 69, 0.8);
+    border-radius: 0.2rem;
+}
+
+.mini {
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    height: 30px;
+    width: 30px;
+}
+
+.form-check-label {
+    min-width: 150px;
+    /* Ajusta según tus necesidades */
+}
+
+.profile-pic {
+    color: transparent;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.profile-pic input {
+    display: none;
+}
+
+.profile-pic img {
+    position: absolute;
+    object-fit: cover;
+    width: 132px;
+    height: 132px;
+    box-shadow: 0 0 8px 0 rgba(255, 255, 255, 0.35);
+    border-radius: 80px;
+    z-index: 0;
+}
+
+.profile-pic .-label {
+    visibility: hidden;
+    cursor: pointer;
+    height: 132px;
+    width: 132px;
+}
+
+.profile-pic:hover .-label {
+    visibility: visible;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    color: #fafafa;
+    transition: background-color 0.2s ease-in-out;
+    border-radius: 80px;
+    margin-bottom: 0;
+}
+
+.profile-pic span {
+    display: inline-flex;
+    padding: 0.2em;
+    height: 2em;
+}
+
+.rounded-circle.img-fluid.custom-style {
+    width: 150px;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.profile-image-container {
+    position: relative;
+    display: inline-block;
+    /* o lo que sea necesario para ajustarse a tu diseño */
+}
+
+.camera-icon {
+    position: absolute;
+    bottom: 0;
+    /* Ajusta según sea necesario */
+    right: 0;
+    /* Ajusta según sea necesario */
+    background-color: #ffffff;
+    /* O el color que prefieras */
+    border-radius: 50%;
+    width: 40px;
+    /* Tamaño del círculo */
+    height: 40px;
+    /* Tamaño del círculo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    /* Sombra opcional para darle profundidad */
+}
+
+.camera-icon i {
+    font-size: 20px;
+    /* Ajusta el tamaño del icono de la cámara */
+}
+
+/* Esconde el input de archivo real */
+#file-input {
+    display: none;
+}

@@ -1,0 +1,228 @@
+<div class="modal show d-block posicion" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <mat-horizontal-stepper [linear]="(!fichaCreada && isFirstStep()) || (fichaCreada && isNStep(2))"
+          #stepper class="custom-stepper">
+          <!-- Paso 0: Edición y Descarga de Ficha -->
+          @if (fichaCreada) {
+            <mat-step>
+              <ng-template matStepLabel>Ficha Creada</ng-template>
+              <div class="container text-center">
+                <h2 class="mt-4 text-danger">Ficha de Movilidad Creada</h2>
+                <p class="lead mb-4">Puedes editar la ficha, descargarla en diferentes formatos o eliminarla si lo deseas.</p>
+                <div class="d-flex justify-content-center align-items-center flex-column mb-4">
+                  <button class="btn custom-btn btn-primary mb-3" (click)="onFooterButtonClick('next')">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    Editar Ficha
+                  </button>
+                  <div class="d-flex justify-content-center mb-3">
+                    <button class="btn custom-btn btn-primary me-2 download-button" (click)="descargarDocx()"
+                      aria-label="Descargar DOCX" [disabled]="isLoadingDocx">
+                      <i class="bi bi-file-earmark-word me-2"></i>
+                      @if (isLoadingDocx) {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      }
+                      Descargar DOCX
+                    </button>
+                    <button class="btn custom-btn btn-danger download-button" (click)="descargarPdf()"
+                      aria-label="Descargar PDF" [disabled]="isLoadingPdf">
+                      <i class="bi bi-file-earmark-pdf me-2"></i>
+                      @if (isLoadingPdf) {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                      }
+                      Descargar PDF
+                    </button>
+                  </div>
+                  <button class="btn custom-btn btn-outline-danger" (click)="eliminarFicha()" aria-label="Eliminar Ficha">
+                    <i class="bi bi-trash me-2"></i>
+                    Eliminar Ficha
+                  </button>
+                </div>
+              </div>
+            </mat-step>
+          }
+
+
+          <!-- Paso 1: Datos Personales -->
+          <mat-step [stepControl]="datosPersonalesFormGroup">
+            <form [formGroup]="datosPersonalesFormGroup">
+              <ng-template matStepLabel>Datos Personales</ng-template>
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <div class="form-check form-switch switch-lg">
+                    <label class="form-check-label" for="temporal">Temporal</label>
+                    <input class="form-check-input" type="checkbox" id="temporal"
+                      [checked]="temporal" (change)="onTiempoEstanciaChange($event)">
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+                  <input type="date" id="fechaInicio" class="form-control"
+                    formControlName="fechaInicio" required>
+                </div>
+                @if (temporal) {
+                  <div class="col-md-6">
+                    <label for="fechaFin" class="form-label">Fecha de Fin</label>
+                    <input type="date" id="fechaFin" class="form-control" formControlName="fechaFin"
+                      required>
+                  </div>
+                }
+              </div>
+              <div class="row mb-3">
+                <hr>
+                  <div class="mb-3">
+                    <h6 class="text-start">{{'ui.colectivo.censo.movilidad.residencia' | translate }}
+                    </h6>
+                  </div>
+                  <div class="row mb-3">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="comunidad" class="form-label">{{'ui.perfil.comunidad' |
+                        translate }}</label>
+                        <select id="comunidad" class="form-control"
+                          formControlName="comunidadAutonoma"
+                          (change)="cambiaComunidad($any($event.target).value)">
+                          <option disabled value=0>{{'ui.inputs.seleccionaComunidad' |
+                          translate }}</option>
+                          @for (c of comunidadesAutonomas; track c) {
+                            <option [value]="c.id">
+                              {{c.nombre}}
+                            </option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="provincia" class="form-label">{{'ui.perfil.provincia' |
+                        translate }}</label>
+                        <select id="provincia" class="form-control" formControlName="provincia"
+                          (change)="cambiaProvincia($any($event.target).value)">
+                          <option disabled value=0>{{'ui.inputs.seleccionaProvincia' |
+                          translate }}</option>
+                          @for (p of provincias; track p) {
+                            <option [value]="p.id">
+                            {{p.nombre}}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="municipio" class="form-label">{{'ui.perfil.municipio' |
+                        translate }}</label>
+                        <select id="municipio" class="form-control" formControlName="municipio">
+                          <option disabled value="0">{{'ui.inputs.seleccionaMunicipio' |
+                          translate }}</option>
+                          @for (m of municipios; track m) {
+                            <option [value]="m.id">
+                            {{m.nombre}}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="objetoTraslado" class="form-label">Objeto del Traslado (estudios,
+                    trbajo, personal...)</label>
+                    <input type="text" id="objetoTraslado" class="form-control"
+                      formControlName="objetoTraslado" required>
+                  </div>
+                </div>
+              </form>
+            </mat-step>
+
+            <!-- Paso 2: Experiencia Trabajo Externo -->
+            <mat-step [stepControl]="experienciaTrabajoFormGroup">
+              <form [formGroup]="experienciaTrabajoFormGroup">
+                <ng-template matStepLabel>Experiencia Trabajo Externo</ng-template>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="frentesTrabajo" class="form-label">Frentes de Trabajo</label>
+                    <!-- Reemplazado el input por un textarea -->
+                    <textarea id="frentesTrabajo" class="form-control" formControlName="frentesTrabajo"
+                    required rows="4"></textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="sindicatoEstudiantil" class="form-label">Sindicato/Asociación
+                    Estudiantil</label>
+                    <!-- Reemplazado el input por un textarea -->
+                    <textarea id="sindicatoEstudiantil" class="form-control"
+                    formControlName="sindicatoEstudiantil" required rows="4"></textarea>
+                  </div>
+                </div>
+              </form>
+            </mat-step>
+
+
+            <!-- Paso 3: Trabajo Interno -->
+            <mat-step [stepControl]="trabajoInternoFormGroup">
+              <form [formGroup]="trabajoInternoFormGroup">
+                <ng-template matStepLabel>Trabajo Interno</ng-template>
+                <div class="row mb-3">
+                  <div class="col-md-12">
+                    <label for="otrasResponsabilidades" class="form-label">Otras responsabilidades
+                    tenidas y el porqué de los cambios (si es del CC señalar sólo CC)</label>
+                    <input type="text" id="otrasResponsabilidades" class="form-control"
+                      formControlName="otrasResponsabilidades">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="responsabilidadDestacada" class="form-label">Responsabilidad en la que
+                    destacaría</label>
+                    <input type="text" id="responsabilidadDestacada" class="form-control"
+                      formControlName="responsabilidadDestacada" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="puntosPositivos" class="form-label">Puntos positivos que puede
+                    aportar</label>
+                    <input type="text" id="puntosPositivos" class="form-control"
+                      formControlName="puntosPositivos" required>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="habitosMejorar" class="form-label">Hábitos que debe Mejorar</label>
+                    <input type="text" id="habitosMejorar" class="form-control"
+                      formControlName="habitosMejorar">
+                  </div>
+                </div>
+              </form>
+            </mat-step>
+
+            <!-- Paso 4: Otras Observaciones -->
+            <mat-step [stepControl]="otrasObservacionesFormGroup">
+              <form [formGroup]="otrasObservacionesFormGroup">
+                <ng-template matStepLabel>Otras Observaciones</ng-template>
+                <div class="mb-3">
+                  <label for="otrasObservaciones" class="form-label">Otras Observaciones</label>
+                  <textarea id="otrasObservaciones" class="form-control"
+                  formControlName="otrasObservaciones" rows="3"></textarea>
+                </div>
+              </form>
+            </mat-step>
+          </mat-horizontal-stepper>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+          @if (!isFirstStep()) {
+            <button class="btn btn-secondary" (click)="onFooterButtonClick('previous')"
+            >Anterior</button>
+          }
+          @if (!isLastStep() && !(fichaCreada && isFirstStep())) {
+            <button class="btn btn-danger" (click)="onFooterButtonClick('next')"
+            >Siguiente</button>
+          }
+          @if (isLastStep()) {
+            <button class="btn btn-danger" (click)="aceptar()">Aceptar</button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>

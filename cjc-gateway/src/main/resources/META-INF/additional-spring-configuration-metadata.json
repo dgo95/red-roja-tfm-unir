@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "cjc.front",
+      "type": "java.lang.String",
+      "description": "La url en la cual está el front de red roja"
+  }
+] }

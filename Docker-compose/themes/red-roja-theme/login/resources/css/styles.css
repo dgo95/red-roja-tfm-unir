@@ -1,0 +1,114 @@
+:root {
+  --kc-logo-url: url("../img/keycloak-logo-text.png");
+  --kc-logo-h: 63px;
+  --kc-logo-w: 300px;
+}
+
+/* Reset y wrapper full‑viewport */
+*, *::before, *::after { box-sizing: border-box; }
+html, body, .login-pf .pf-v5-c-login, .login-pf .pf-v5-c-login__container {
+  height: 100%; margin: 0; padding: 0; overflow: hidden;
+}
+
+/* Grid principal */
+.login-pf .pf-v5-c-login__container {
+  display: grid;
+  height: 100vh;
+  grid-template:
+    "aside header" auto
+    "aside main"   1fr
+    "aside footer" auto
+    / 50% 50%;
+}
+
+/* Aside con background */
+.login-pf .pf-v5-c-login__container::before {
+  content: "";
+  grid-area: aside;
+  background: var(--kc-bg-url) center/cover no-repeat;
+}
+
+/* Áreas */
+.pf-v5-c-login__main-header { grid-area: header; margin: 0; }
+.login-pf .pf-v5-c-login__main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  min-height: 0;
+}
+.login-pf .pf-v5-c-login__main-body {
+  width: 100%; max-width: none; padding: 0; margin: 0;
+}
+.pf-v5-c-login__main-footer {
+  grid-area: footer; margin: 0; justify-self: center;
+}
+
+/* Logo */
+div.kc-logo-text {
+  background: var(--kc-logo-url) no-repeat center/contain;
+  height: var(--kc-logo-h);
+  width: var(--kc-logo-w);
+  margin: 0 auto;
+}
+div.kc-logo-text span { display: none; }
+
+/* Bootstrap helpers */
+.login { min-height: 100vh; }
+.login-heading { font-weight: 300; font-size: 1.75rem; }
+.btn-login {
+  font-size: 0.9rem;
+  letter-spacing: 0.05rem;
+  padding: 0.75rem 1rem;
+}
+.trampa {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #dc3545;
+}
+/* styles.css */
+.login-pf .pf-v5-c-login__main-body {
+  /* que crezca para llenar todo el espacio restante */
+  flex: 1 1 auto;
+
+  /* si quieres que el contenido interno también use flex (opcional) */
+  display: flex;
+  flex-direction: column;
+}
+
+/* y, si dentro de main-body tienes .h-100, ahora rellenará realmente el 100% */
+.login-pf .pf-v5-c-login__main-body > .h-100 {
+  flex: 1 1 auto;
+}
+/* 1) Main: flex‑container en columna, con espacio entre header y footer */
+.login-pf .pf-v5-c-login__main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;  /* header arriba, footer abajo */
+  align-items: center;
+  padding: 1rem 0;                  /* respiro arriba y abajo */
+  min-height: 0;                    /* para que flex-children puedan encogerse/crecer */
+}
+
+/* 2) Main-body: que crezca y centre su contenido */
+.login-pf .pf-v5-c-login__main-body {
+  flex: 1;                          /* que ocupe todo el espacio intermedio */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;          /* para centrar tu form dentro del cuerpo */
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 3) Asegurar que container, row y col-12 hereden el 100% de altura */
+.login-pf .pf-v5-c-login__main-body .container-fluid,
+.login-pf .pf-v5-c-login__main-body .row,
+.login-pf .pf-v5-c-login__main-body .col-12 {
+  height: 100%;
+}

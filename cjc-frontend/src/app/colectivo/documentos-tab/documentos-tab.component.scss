@@ -1,0 +1,103 @@
+::ng-deep .fw-semibold.text-danger.fs-2 {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #dc3545;
+}
+
+::ng-deep .nivel-intermedio {
+  background-color: #fff3cd !important; /* Amarillo suave */
+}
+
+::ng-deep .p-dialog-content {
+  max-height: 70vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-bottom: 0 !important;
+}
+
+::ng-deep .nivel-central {
+  background-color: #f8d7da !important; /* Rojo claro */
+}
+
+.fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1050;
+  box-shadow: 0 4px 24px rgba(44,62,80,0.15), 0 1.5px 8px rgba(44,62,80,0.10);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.fab:hover {
+  box-shadow: 0 8px 32px rgba(44,62,80,0.18), 0 3px 12px rgba(44,62,80,0.13);
+  transform: scale(1.07);
+}
+
+// Igualar separación horizontal entre filtros
+:host ::ng-deep .row.gx-5 > [class*="col-"] > .p-inputgroup {
+  margin-right: 1.5rem;
+}
+:host ::ng-deep .row.gx-5 > [class*="col-"]:last-child > .p-inputgroup {
+  margin-right: 0;
+}
+// Contraste alto para el botón Eliminar en menú
+.eliminar-menu-item {
+  background: #dc3545 !important; /* Rojo Bootstrap */
+  color: #fff !important;
+  font-weight: 600;
+}
+.eliminar-menu-item:hover, .eliminar-menu-item:focus {
+  background: #a71d2a !important;
+  color: #fff !important;
+}
+
+// --- Estilos elegantes para el menú del splitbutton ---
+:host ::ng-deep .p-menu.p-menu-sm {
+  border-radius: 1rem !important;
+  box-shadow: 0 6px 32px rgba(44,62,80,0.13), 0 1.5px 8px rgba(44,62,80,0.10);
+  padding: 0.35rem 0.2rem;
+  max-width: 96vw !important;
+  min-width: 180px !important;
+  width: auto !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+:host ::ng-deep .p-menu.p-menu-sm .p-menuitem {
+  border-radius: 0.6rem;
+  margin: 0.1rem 0.3rem;
+  transition: background 0.15s, color 0.15s;
+  font-size: 1.05rem;
+}
+:host ::ng-deep .p-menu.p-menu-sm .p-menuitem-link {
+  border-radius: 0.6rem;
+  padding: 0.55rem 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  box-sizing: border-box;
+}
+:host ::ng-deep .p-menu.p-menu-sm .p-menuitem-link:hover:not(.eliminar-menu-item),
+:host ::ng-deep .p-menu.p-menu-sm .p-menuitem-link:focus:not(.eliminar-menu-item) {
+  background: #f0f4f8 !important;
+  color: #212529 !important;
+}
+:host ::ng-deep .p-menu.p-menu-sm .p-menuitem-separator {
+  border-top: 1px solid #e3e3e3;
+  margin: 0.2rem 0.8rem;
+}
+// --- Fin estilos elegantes menú splitbutton ---
+
+// Contraste máximo para el botón Eliminar en menú desplegable
+:host ::ng-deep .p-menu.p-menu-sm .eliminar-menu-item,
+:host ::ng-deep .p-menu.p-menu-sm .eliminar-menu-item.p-menuitem-link {
+  background: #c1121f !important;
+  color: #fff !important;
+  border: 2px solid #a71d2a !important;
+  box-shadow: 0 2px 10px rgba(193,18,31,0.08);
+  font-weight: 700;
+}
+:host ::ng-deep .p-menu.p-menu-sm .eliminar-menu-item:hover,
+:host ::ng-deep .p-menu.p-menu-sm .eliminar-menu-item:focus {
+  background: #a71d2a !important;
+  color: #fff !important;
+  border-color: #7a1220 !important;
+}

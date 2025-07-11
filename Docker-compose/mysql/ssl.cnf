@@ -1,0 +1,8 @@
+[mysqld]
+ssl-ca   = /certs/ca-int.pem
+ssl-cert = /certs/mysql-server.pem
+ssl-key  = /certs/mysql-server-key.pem
+require_secure_transport = ON
+
+pid-file = /run/mysqld-private/mysqld.pid
+lower_case_table_names = 2

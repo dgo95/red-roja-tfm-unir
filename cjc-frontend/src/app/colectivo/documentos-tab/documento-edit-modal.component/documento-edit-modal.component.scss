@@ -1,0 +1,12 @@
+.fw-semibold.text-danger.fs-4 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #dc3545;
+}
+
+:host ::ng-deep .p-dialog-content {
+  max-height: 70vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-bottom: 0 !important;
+}

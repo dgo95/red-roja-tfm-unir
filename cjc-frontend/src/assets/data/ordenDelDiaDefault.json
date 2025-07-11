@@ -1,0 +1,106 @@
+{
+    "puntos": [
+        {
+            "id": 0,
+            "orden": 1,
+            "titulo": "Político",
+            "descripcion": "Se trata el rimbo de la vida",
+            "subpuntos": [
+                {
+                    "id": 0,
+                    "orden": 1,
+                    "titulo": "Boletín Central",
+                    "descripcion": ""
+                },
+                {
+                    "id": 0,
+                    "orden": 2,
+                    "titulo": "El proletario",
+                    "descripcion": ""
+                }
+            ]
+        },
+        {
+            "id": 0,
+            "orden": 2,
+            "titulo": "Organización",
+            "descripcion": "",
+            "subpuntos": [
+                {
+                    "id": 0,
+                    "orden": 1,
+                    "titulo": "Simpatizantes",
+                    "descripcion": ""
+                }
+            ]
+        },
+        {
+            "id": 0,
+            "orden": 3,
+            "titulo": "Frentes de Masas",
+            "descripcion": "",
+            "subpuntos": [
+                {
+                    "id": 0,
+                    "orden": 1,
+                    "titulo": "Frente de Estudiates",
+                    "descripcion": ""
+                },
+                {
+                    "id": 0,
+                    "orden": 2,
+                    "titulo": "AMOC",
+                    "descripcion": ""
+                },
+                {
+                    "id": 0,
+                    "orden": 3,
+                    "titulo": "MOS",
+                    "descripcion": ""
+                }
+            ]
+        },
+        {
+            "id": 0,
+            "orden": 4,
+            "titulo": "Agitación y Propaganda",
+            "descripcion": "",
+            "subpuntos": []
+        },
+        {
+            "id": 0,
+            "orden": 5,
+            "titulo": "Formación",
+            "descripcion": "",
+            "subpuntos": [
+                {
+                    "id": 0,
+                    "orden": 1,
+                    "titulo": "III Bloque formativo",
+                    "descripcion": ""
+                }
+            ]
+        },
+        {
+            "id": 0,
+            "orden": 6,
+            "titulo": "Finanzas",
+            "descripcion": "",
+            "subpuntos": []
+        },
+        {
+            "id": 0,
+            "orden": 7,
+            "titulo": "Varios",
+            "descripcion": "",
+            "subpuntos": []
+        },
+        {
+            "id": 0,
+            "orden": 8,
+            "titulo": "Conclusiones",
+            "descripcion": "Resumen de decisiones y próximos pasos",
+            "subpuntos": []
+        }
+    ]
+}

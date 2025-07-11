@@ -1,0 +1,9 @@
+# application.yml
+spring:
+  application:
+    name: cjc-gateway
+server:
+  port: 8080
+
+cjc:
+  front: https://localhost:4200

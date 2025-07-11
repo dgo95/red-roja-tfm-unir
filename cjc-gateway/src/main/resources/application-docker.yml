@@ -1,0 +1,69 @@
+# application-docker.yml
+spring:
+  server:
+    port: 8443
+    ssl:
+      enabled: true
+      key-store: ${SERVER_SSL_KEY_STORE}
+      key-store-password: ${SERVER_SSL_KEY_STORE_PASSWORD:changeit}
+      key-alias: redroja-gw
+      key-store-type: PKCS12
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://keycloak:8443/realms/redroja-realm
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: auth
+              uri: ${AUTH_SERVICE_URI}
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - RewritePath=/api/auth/(?<segment>.*), /${segment}
+
+            - id: rest
+              uri: ${REST_SERVICE_URI}
+              predicates:
+                - Path=/api/rest/**
+              filters:
+                - RewritePath=/api/rest/(?<segment>.*), /${segment}
+
+            - id: documentos
+              uri: ${DOCUMENTOS_SERVICE_URI}
+              predicates:
+                - Path=/api/documentos/**
+              filters:
+                - RewritePath=/api/documentos/(?<segment>.*), /${segment}
+
+          default-filters:
+            - name: RequestRateLimiter
+              args:
+                key-resolver: "#{@principalOrIpKeyResolver}"
+                rate-limiter: "#{@bucket4jRateLimiter}"
+
+cjc:
+  front: ${CJC_FRONT}
+
+bucket4j:
+  enabled: true
+  cache-to-use: redis-lettuce
+  filters:
+    - id: globalRateLimiter
+      url: /.*
+      rate-limits:
+        - bandwidths:
+            - capacity: 20
+              time: 1
+              unit: seconds
+              refill-speed: interval

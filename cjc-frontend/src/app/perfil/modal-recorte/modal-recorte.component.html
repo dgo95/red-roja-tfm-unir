@@ -1,0 +1,20 @@
+<!-- modal-recorte.component.html -->
+<div class="modal show d-block" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Recortar imagen</h5>
+                <button type="button" class="btn-close" (click)="cancelar()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="1" [roundCropper]="true"
+                [resizeToWidth]="1024" [resizeToHeight]="1024" format="png" (imageCropped)="imageCropped($event)"
+                    (imageLoaded)="imageLoaded()" (loadImageFailed)="loadImageFailed()"></image-cropper>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+                <button class="btn btn-danger" (click)="aceptar()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>

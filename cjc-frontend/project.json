@@ -1,0 +1,95 @@
+{
+  "$schema": "node_modules/nx/schemas/project-schema.json",
+  "name": "cjc-front",
+  "projectType": "application",
+  "generators": {},
+  "sourceRoot": "src",
+  "prefix": "app",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:application",
+      "options": {
+        "stylePreprocessorOptions": {
+          "includePaths": ["node_modules/bootstrap/dist/css"]
+        },
+        "outputPath": "dist/cjc-front",
+        "index": "src/index.html",
+        "polyfills": ["zone.js", "@angular/localize/init"],
+        "tsConfig": "tsconfig.app.json",
+        "assets": ["src/favicon.ico", "src/assets"],
+        "styles": [
+          "node_modules/bootstrap/dist/css/bootstrap.min.css",
+          "node_modules/primeicons/primeicons.css",
+          "@angular/material/prebuilt-themes/indigo-pink.css",
+          "src/styles.scss",
+          "src/styles/custom-theme.scss"
+        ],
+        "scripts": [
+          "node_modules/jquery/dist/jquery.min.js",
+          "node_modules/@popperjs/core/dist/umd/popper.min.js",
+          "node_modules/bootstrap/dist/js/bootstrap.min.js"
+        ],
+        "browser": "src/main.ts"
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "5mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "50kb",
+              "maximumError": "100kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "ssl": true,
+        "sslKey": "src/certs/front.key",
+        "sslCert": "src/certs/front.crt",
+        "publicHost": "https://localhost:4200",
+        "port": 4200
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "cjc-front:build:production"
+        },
+        "development": {
+          "buildTarget": "cjc-front:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "cjc-front:build"
+      }
+    },
+    "test": {
+      "executor": "@angular-devkit/build-angular:karma",
+      "options": {
+        "polyfills": ["zone.js", "zone.js/testing"],
+        "tsConfig": "tsconfig.spec.json",
+        "assets": ["src/favicon.ico", "src/assets"],
+        "styles": ["src/styles.scss", "src/styles/styles.scss"],
+        "scripts": []
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+<!-- editar-responsabilidades-modal.component.html -->
+<div class="modal show d-block" tabindex="-2" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear Punto</h5>
+                <button type="button" class="btn-close" (click)="cancelar()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="form">
+                    <!-- Un input para titulo y un textarea para descriocion con placeholder(opcional) -->
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="titulo" formControlName="titulo">
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" formControlName="descripcion"
+                            placeholder="(Opcional)"></textarea>
+                    </div>
+                </form>
+
+
+            </div>
+            <!-- Aquí termina la grilla de dos columnas -->
+            <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+                <button type="submit" [disabled]="!form.valid" class="btn btn-danger"
+                    (click)="aceptar()">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>

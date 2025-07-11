@@ -1,0 +1,76 @@
+trigger:
+- main
+
+###############################################################################
+# (OPCIONAL) PRIMER STAGE: Extraer la versión del pom.xml
+###############################################################################
+stages:
+- stage: ExtractVersion
+  displayName: "Extraer versión del proyecto (pom.xml)"
+  jobs:
+  - job: GetVersion
+    displayName: "Obtener versión desde pom.xml"
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - script: |
+        echo "Extrayendo versión del proyecto Maven desde pom.xml..."
+        VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+
+        if [ -z "$VERSION" ]; then
+          echo "Error: No se pudo extraer la versión."
+          exit 1
+        fi
+
+        echo "Versión encontrada: $VERSION"
+        # Publicar la variable como output
+        echo "##vso[task.setvariable variable=version;isOutput=true]$VERSION"
+      name: setVersion
+      displayName: "Extraer y guardar versión"
+
+###############################################################################
+# SEGUNDO STAGE: Construir imagen Docker (con Maven dentro del Dockerfile) y hacer push
+###############################################################################
+- stage: BuildAndPush
+  displayName: "Construir y publicar imagen Docker"
+  # Depende del stage anterior (solo si quieres; si no, puedes omitir el dependsOn)
+  dependsOn: ExtractVersion  
+  # Consumimos la variable de salida del stage anterior, si fuera necesario
+  variables:
+    version: $[ stageDependencies.ExtractVersion.GetVersion.outputs['setVersion.version'] ]
+  jobs:
+  - job: BuildAndPushDocker
+    displayName: "Construir y publicar imagen Docker"
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    # 1) Descargar Secure File (settings.xml)
+    - task: DownloadSecureFile@1
+      displayName: "Descargar settings.xml"
+      inputs:
+        secureFile: "settings.xml"  # Nombre tal cual esté en Secure Files
+
+    # 2) Copiar el settings.xml descargado al mismo directorio donde está tu Dockerfile,
+    #    para que el 'docker build' lo incluya en el contexto.
+    - script: |
+        echo "Copiando settings.xml al directorio con Dockerfile..."
+        cp "$(Agent.TempDirectory)/settings.xml" "$(Build.SourcesDirectory)/settings.xml"
+      displayName: "Colocar settings.xml junto al Dockerfile"
+
+    # 3) Hacer login en tu registro Docker (Docker Hub, ACR, etc.)
+    - task: Docker@2
+      displayName: "Login en Docker Registry"
+      inputs:
+        command: login
+        containerRegistry: "dockerHubConnection"   # Cambia según tu servicio de conexión
+
+    # 4) Construir y pushear la imagen Docker
+    - task: Docker@2
+      displayName: "Build and push Docker image"
+      inputs:
+        command: buildAndPush
+        containerRegistry: "dockerHubConnection"
+        dockerfile: "$(Build.SourcesDirectory)/Dockerfile"   # Ajusta la ruta si tu Dockerfile está en otro lado
+        repository: "dgo95/red-roja"
+        tags: |
+          nucleo

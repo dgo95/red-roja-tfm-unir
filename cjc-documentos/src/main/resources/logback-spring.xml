@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include
+		resource="org/springframework/boot/logging/logback/defaults.xml" />
+	<property name="CONSOLE_LOG_PATTERN"
+		value="%clr(%d{dd-MM-yyyy HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p})  %clr(%-40.40logger{39}){cyan} %clr(%X{numeroCarnet}){magenta} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+	<property name="FILE_PATH"
+		value="C:\\Proyectos\\logs\\cjc-documentos\\cjc-documentos" />
+	<property name="FILE_LOG_PATTERN"
+		value="%d{dd-MM-yyyy HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} %-40.40logger{39} %X{numeroCarnet} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+
+	<!-- Consola -->
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+		<level>DEBUG</level>
+	</filter>
+		<encoder>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Archivos -->
+	<!-- Appender para INFO -->
+	<appender name="FILE-INFO"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${FILE_PATH}-INFO.log</file>
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+		</encoder>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${FILE_PATH}-INFO.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>3</maxHistory>
+		</rollingPolicy>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+	</appender>
+
+	<!-- Appender para DEBUG -->
+	<appender name="FILE-DEBUG"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${FILE_PATH}-DEBUG.log</file>
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+		</encoder>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${FILE_PATH}-DEBUG.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>3</maxHistory>
+		</rollingPolicy>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>DEBUG</level>
+		</filter>
+	</appender>
+
+	<!-- Appender para TRACE -->
+	<appender name="FILE-TRACE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${FILE_PATH}-TRACE.log</file>
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+		</encoder>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${FILE_PATH}-TRACE.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>3</maxHistory>
+		</rollingPolicy>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>TRACE</level>
+		</filter>
+	</appender>
+
+	<!-- Appender para ERROR -->
+	<appender name="FILE-ERROR"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${FILE_PATH}-ERROR.log</file>
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+		</encoder>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${FILE_PATH}-ERROR.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>3</maxHistory>
+		</rollingPolicy>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+	</appender>
+
+	<!-- Appender para WARN -->
+	<appender name="FILE-WARN"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${FILE_PATH}-WARN.log</file>
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+		</encoder>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${FILE_PATH}-WARN.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>3</maxHistory>
+		</rollingPolicy>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>WARN</level>
+		</filter>
+	</appender>
+
+
+
+	<!-- Niveles para toda la aplicación -->
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE-INFO" />
+		<appender-ref ref="FILE-WARN" />
+		<appender-ref ref="FILE-DEBUG" />
+		<appender-ref ref="FILE-TRACE" />
+		<appender-ref ref="FILE-ERROR" />
+	</root>
+
+	<!-- Nivel DEBUG solo para es.juventudcomunista.redroja.cjcBack -->
+	<logger name="org.springframework" level="INFO" />
+	<logger name="es.juventudcomunista.redroja.cjcback" level="DEBUG" />
+</configuration>

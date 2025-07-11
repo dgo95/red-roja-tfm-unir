@@ -1,0 +1,4 @@
+1. Angular 19
+2. PrimeNG 19
+3. Los componentes viejos usan Angular Material, los nuevos usan PrimeNG
+4. Reactive Forms en lugar de FormsModule

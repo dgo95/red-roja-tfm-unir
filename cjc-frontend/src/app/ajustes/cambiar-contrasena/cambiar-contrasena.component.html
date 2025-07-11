@@ -1,0 +1,53 @@
+<form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()">
+  <div class="mb-3">
+    <label for="currentPassword" class="form-label">{{ 'ui.ajustes.contrasenaActual' | translate }}</label>
+    <input type="password" class="form-control" id="currentPassword" formControlName="currentPassword" matInput>
+    @if (changePasswordForm.get('currentPassword')?.invalid && changePasswordForm.get('currentPassword')?.touched) {
+      <div
+        class="text-danger">
+        @if (changePasswordForm.get('currentPassword')?.errors?.['required']) {
+          <p>{{
+          'ui.errores.contrasenaRequerida' | translate }}</p>
+        }
+      </div>
+    }
+  </div>
+  <div class="mb-3">
+    <label for="newPassword" class="form-label">{{ 'ui.ajustes.nuevaContrasena' | translate }}</label>
+    <input type="password" class="form-control" id="newPassword" formControlName="newPassword" matInput>
+    @if (changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched) {
+      <div
+        class="text-danger">
+        @if (changePasswordForm.get('newPassword')?.errors?.['required']) {
+          <p>{{ 'ui.errores.contrasenaRequerida' |
+          translate }}</p>
+        }
+        @if (changePasswordForm.get('newPassword')?.errors?.['minlength']) {
+          <p>{{ 'ui.errores.passwordMinLength' |
+          translate }}</p>
+        }
+      </div>
+    }
+  </div>
+  <div class="mb-3">
+    <label for="confirmPassword" class="form-label">{{ 'ui.ajustes.confirmarContrasena' | translate }}</label>
+    <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword" matInput>
+    @if (changePasswordForm.get('confirmPassword')?.invalid && changePasswordForm.get('confirmPassword')?.touched) {
+      <div
+        class="text-danger">
+        @if (changePasswordForm.get('confirmPassword')?.errors?.['required']) {
+          <p>{{
+          'ui.errores.contrasenaRequerida' | translate }}</p>
+        }
+      </div>
+    }
+    @if (changePasswordForm.errors?.['mismatch'] && changePasswordForm.get('confirmPassword')?.touched) {
+      <div
+        class="text-danger">
+        {{ 'ui.errores.matchPassword' | translate }}
+      </div>
+    }
+  </div>
+  <button type="submit" class="btn btn-danger" [disabled]="changePasswordForm.invalid">{{
+  'ui.ajustes.cambiarContrasena' | translate }}</button>
+</form>

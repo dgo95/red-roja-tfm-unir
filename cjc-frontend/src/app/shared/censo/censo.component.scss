@@ -1,0 +1,51 @@
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.mat-elevation-z8 {
+    overflow-x: auto; /* Habilita el desplazamiento horizontal si es necesario */
+}
+
+table {
+    width: 100%;
+}
+
+.excel-button {
+    background-color: #4CAF50; /* Color verdoso */
+    color: white; /* Color del icono */
+    border: none; /* Sin borde */
+    margin-top: 10px; /* Espacio entre la tabla y el botón */
+}
+
+.excel-button:hover {
+    background-color: #45a049; /* Color para el hover */
+}
+
+.table-wrapper {
+    overflow-x: auto; /* Habilita el desplazamiento horizontal si es necesario */
+    margin-bottom: 10px; /* Espacio entre la tabla y el botón de exportar */
+}
+
+td, th {
+    min-width: 150px; /* Usa min-width en lugar de width para permitir flexibilidad */
+}
+
+.sticky-column {
+    position: sticky;
+    right: 0;
+    background: white;
+    z-index: 10;
+}
+
+.gold-icon {
+    color: gold;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end; /* Alinea los botones a la derecha */
+    margin: 20px 0; /* Margen arriba y abajo */
+}
+
+@import 'bootstrap-icons/font/bootstrap-icons.css';
